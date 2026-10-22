@@ -1,0 +1,10 @@
+packages:
+  - apps/*
+  - packages/*
+
+saveExact: true
+engineStrict: true
+strictPeerDependencies: true
+autoInstallPeers: false
+# 安装脚本不自动放行；初次安装审查 pnpm 提示后逐项决定。
+onlyBuiltDependencies: []

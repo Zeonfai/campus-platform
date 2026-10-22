@@ -1,0 +1,48 @@
+# Node dependencies and generated output
+node_modules/
+dist/
+build/
+coverage/
+.cache/
+.turbo/
+*.tsbuildinfo
+
+# Local secrets and environment overrides
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+
+# Runtime data, logs, and temporary artifacts
+*.log
+logs/
+tmp/
+temp/
+.local/
+/data/
+pgdata/
+playwright-report/
+test-results/
+
+# OS and editor local files
+.DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.example.json
+
+# Local AI session caches; keep project rules and specs versioned
+.codex-log/
+
+# Optional local Python artifacts; this does not install or modify Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Generated contract and Prisma clients; sources and migrations stay versioned
+**/src/generated/

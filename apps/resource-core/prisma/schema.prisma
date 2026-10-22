@@ -1,0 +1,251 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "esm"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model ServiceMetadata {
+  key       String   @id @db.VarChar(100)
+  value     String   @db.VarChar(500)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+
+  @@map("d_service_metadata")
+}
+
+enum DScope {
+  SELF
+  DEPARTMENT
+  MANAGED_ROOMS
+  ALL
+}
+
+enum DPowerType {
+  NONE
+  FIXED
+  RAIL
+}
+
+model DDepartment {
+  id    String  @id @db.VarChar(100)
+  name  String  @unique @db.VarChar(200)
+  users DUser[]
+  rooms DRoom[]
+
+  @@map("d_departments")
+}
+
+model DUser {
+  id           String         @id @db.VarChar(100)
+  username     String         @unique @db.VarChar(200)
+  displayName  String         @db.VarChar(200)
+  passwordHash String         @db.VarChar(300)
+  enabled      Boolean        @default(true)
+  departmentId String?        @db.VarChar(100)
+  department   DDepartment?   @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+  roles        DUserRole[]
+  managedRooms DManagedRoom[]
+  sessions     DSession[]
+  bookings     M1Booking[]
+  createdAt    DateTime       @default(now()) @db.Timestamptz(3)
+  updatedAt    DateTime       @default(now()) @updatedAt @db.Timestamptz(3)
+
+  @@index([departmentId])
+  @@map("d_users")
+}
+
+model DRole {
+  id          String            @id @db.VarChar(100)
+  name        String            @unique @db.VarChar(200)
+  scope       DScope
+  users       DUserRole[]
+  permissions DRolePermission[]
+
+  @@map("d_roles")
+}
+
+model DPermission {
+  id          String            @id @db.VarChar(100)
+  description String            @db.VarChar(200)
+  roles       DRolePermission[]
+
+  @@map("d_permissions")
+}
+
+model DUserRole {
+  userId String @db.VarChar(100)
+  roleId String @db.VarChar(100)
+  user   DUser  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role   DRole  @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+  @@index([roleId])
+  @@map("d_user_roles")
+}
+
+model DRolePermission {
+  roleId       String      @db.VarChar(100)
+  permissionId String      @db.VarChar(100)
+  role         DRole       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   DPermission @relation(fields: [permissionId], references: [id], onDelete: Restrict)
+
+  @@id([roleId, permissionId])
+  @@map("d_role_permissions")
+}
+
+model DRoom {
+  id                     String             @id @db.VarChar(100)
+  code                   String             @unique @db.VarChar(200)
+  name                   String             @db.VarChar(200)
+  departmentId           String?            @db.VarChar(100)
+  department             DDepartment?       @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+  restrictedToDepartment Boolean            @default(false)
+  enabled                Boolean            @default(true)
+  seats                  DSeat[]
+  managers               DManagedRoom[]
+  bookings               M1Booking[]
+  resourceEffects        M1ResourceEffect[]
+  openingRules           DOpeningRule[]
+
+  @@index([departmentId])
+  @@map("d_rooms")
+}
+
+model DSeat {
+  id        String      @id @db.VarChar(100)
+  roomId    String      @db.VarChar(100)
+  room      DRoom       @relation(fields: [roomId], references: [id], onDelete: Restrict)
+  code      String      @db.VarChar(200)
+  enabled   Boolean     @default(true)
+  powerType DPowerType
+  bookings  M1Booking[]
+
+  @@unique([roomId, code])
+  @@map("d_seats")
+}
+
+model DManagedRoom {
+  userId String @db.VarChar(100)
+  roomId String @db.VarChar(100)
+  user   DUser  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room   DRoom  @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roomId])
+  @@map("d_managed_rooms")
+}
+
+model DSession {
+  tokenHash String    @id @db.Char(64)
+  userId    String    @db.VarChar(100)
+  user      DUser     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now()) @db.Timestamptz(3)
+  expiresAt DateTime  @db.Timestamptz(3)
+  revokedAt DateTime? @db.Timestamptz(3)
+
+  @@index([userId, expiresAt])
+  @@index([expiresAt])
+  @@map("d_sessions")
+}
+
+model DLoginBucket {
+  key         String   @id @db.Char(64)
+  windowStart DateTime @db.Timestamptz(3)
+  attempts    Int
+
+  @@index([windowStart])
+  @@map("d_login_buckets")
+}
+
+model DAuditEvent {
+  id        String   @id @db.Uuid
+  actorId   String   @db.VarChar(100)
+  action    String   @db.VarChar(100)
+  targetId  String   @db.VarChar(100)
+  traceId   String   @db.VarChar(100)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([actorId, createdAt])
+  @@map("d_audit_events")
+}
+
+model DBookingPolicy {
+  id       String @id @db.VarChar(100)
+  maxHours Int    @default(4)
+
+  @@map("d_booking_policy")
+}
+
+model DOpeningRule {
+  roomId     String @db.VarChar(100)
+  weekday    Int
+  opensHour  Int
+  closesHour Int
+  room       DRoom  @relation(fields: [roomId], references: [id], onDelete: Restrict)
+
+  @@id([roomId, weekday, opensHour])
+  @@map("d_opening_rules")
+}
+
+model M1Booking {
+  id           String    @id @db.Uuid
+  roomId       String    @db.VarChar(100)
+  seatId       String    @db.VarChar(100)
+  userId       String    @db.VarChar(100)
+  room         DRoom     @relation(fields: [roomId], references: [id], onDelete: Restrict)
+  seat         DSeat     @relation(fields: [seatId], references: [id], onDelete: Restrict)
+  user         DUser     @relation(fields: [userId], references: [id], onDelete: Restrict)
+  startsAt     DateTime  @db.Timestamptz(3)
+  endsAt       DateTime  @db.Timestamptz(3)
+  status       String    @db.VarChar(30)
+  cancelReason String?   @db.VarChar(1000)
+  cancelledAt  DateTime? @db.Timestamptz(3)
+  createdAt    DateTime  @default(now()) @db.Timestamptz(3)
+
+  @@index([roomId, startsAt, endsAt])
+  @@index([userId, id])
+  @@map("m1_bookings")
+}
+
+model M1WriteReceipt {
+  id          String   @id @db.VarChar(200)
+  fingerprint String   @db.Char(64)
+  result      Json
+  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+
+  @@map("m1_write_receipts")
+}
+
+model M1ResourceEffect {
+  sourceModule String    @db.VarChar(10)
+  sourceId     String    @db.VarChar(100)
+  roomId       String?   @db.VarChar(100)
+  room         DRoom?    @relation(fields: [roomId], references: [id], onDelete: Restrict)
+  startsAt     DateTime? @db.Timestamptz(3)
+  endsAt       DateTime? @db.Timestamptz(3)
+  state        String    @db.VarChar(20)
+  revision     Int
+  operationId  String    @db.Uuid
+  actorId      String    @db.VarChar(100)
+  reason       String    @db.VarChar(1000)
+  updatedAt    DateTime  @default(now()) @updatedAt @db.Timestamptz(3)
+
+  @@id([sourceModule, sourceId])
+  @@index([roomId, state, startsAt, endsAt])
+  @@map("m1_resource_effects")
+}
+
+model M1Command {
+  operationId  String   @id @db.Uuid
+  fingerprint  String   @db.Char(64)
+  sourceModule String   @db.VarChar(10)
+  sourceId     String   @db.VarChar(100)
+  status       Int
+  response     Json
+  createdAt    DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([sourceModule, sourceId])
+  @@map("m1_commands")
+}

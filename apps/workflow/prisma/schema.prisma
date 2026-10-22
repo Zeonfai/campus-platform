@@ -1,0 +1,247 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "esm"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Workflow-owned infrastructure and M2 data; never link to the core database.
+model ServiceMetadata {
+  key       String   @id @db.VarChar(100)
+  value     String   @db.VarChar(500)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+
+  @@map("wf_service_metadata")
+}
+
+model M2Policy {
+  id             String          @db.VarChar(100)
+  revision       Int
+  name           String          @db.VarChar(200)
+  timeoutMinutes Int
+  steps          Json
+  createdBy      String          @db.VarChar(100)
+  createdAt      DateTime        @default(now()) @db.Timestamptz(3)
+  applications   M2Application[]
+
+  @@id([id, revision])
+  @@map("m2_policy")
+}
+
+model M2Application {
+  id             String     @id @db.Uuid
+  roomId         String     @db.VarChar(100)
+  applicantId    String     @db.VarChar(100)
+  departmentId   String?    @db.VarChar(100)
+  purpose        String     @db.VarChar(1000)
+  startsAt       DateTime   @db.Timestamptz(3)
+  endsAt         DateTime   @db.Timestamptz(3)
+  deadlineAt     DateTime   @db.Timestamptz(3)
+  policyId       String     @db.VarChar(100)
+  policyRevision Int
+  status         String     @default("PENDING") @db.VarChar(30)
+  revision       Int        @default(1)
+  targetStatus   String?    @db.VarChar(30)
+  syncError      String?    @db.VarChar(100)
+  createdAt      DateTime   @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime   @default(now()) @updatedAt @db.Timestamptz(3)
+  policy         M2Policy   @relation(fields: [policyId, policyRevision], references: [id, revision])
+  steps          M2Step[]
+  outbox         M2Outbox[]
+
+  @@index([applicantId, id])
+  @@index([status, deadlineAt])
+  @@map("m2_application")
+}
+
+model M2Step {
+  id            String        @id @db.Uuid
+  applicationId String        @db.Uuid
+  position      Int
+  roleId        String        @db.VarChar(100)
+  scope         String        @db.VarChar(30)
+  status        String        @default("PENDING") @db.VarChar(20)
+  decidedBy     String?       @db.VarChar(100)
+  comment       String?       @db.VarChar(1000)
+  decidedAt     DateTime?     @db.Timestamptz(3)
+  application   M2Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@unique([applicationId, position])
+  @@index([roleId, status])
+  @@map("m2_step")
+}
+
+model M2WriteReceipt {
+  id          String   @id @db.VarChar(200)
+  fingerprint String   @db.Char(64)
+  result      Json
+  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+
+  @@map("m2_write_receipt")
+}
+
+model M2Outbox {
+  operationId         String        @id @db.Uuid
+  applicationId       String        @db.Uuid
+  applicationRevision Int
+  kind                String        @db.VarChar(20)
+  actorId             String        @db.VarChar(100)
+  reason              String        @db.VarChar(1000)
+  state               String        @default("READY") @db.VarChar(20)
+  attempts            Int           @default(0)
+  availableAt         DateTime      @default(now()) @db.Timestamptz(3)
+  leaseToken          String?       @db.Uuid
+  leasedUntil         DateTime?     @db.Timestamptz(3)
+  lastError           String?       @db.VarChar(100)
+  createdAt           DateTime      @default(now()) @db.Timestamptz(3)
+  finishedAt          DateTime?     @db.Timestamptz(3)
+  application         M2Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@unique([applicationId, applicationRevision])
+  @@index([state, availableAt])
+  @@map("m2_outbox")
+}
+
+model M2AuditEvent {
+  id            String   @id @db.Uuid
+  applicationId String?  @db.Uuid
+  actorId       String   @db.VarChar(100)
+  action        String   @db.VarChar(100)
+  data          Json
+  createdAt     DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([applicationId, createdAt])
+  @@map("m2_audit_event")
+}
+
+model M3Policy {
+  id                String        @db.VarChar(100)
+  revision          Int
+  name              String        @db.VarChar(200)
+  responseMinutes   Int
+  repairMinutes     Int
+  acceptanceMinutes Int
+  createdBy         String        @db.VarChar(100)
+  createdAt         DateTime      @default(now()) @db.Timestamptz(3)
+  workOrders        M3WorkOrder[]
+
+  @@id([id, revision])
+  @@map("m3_policy")
+}
+
+model M3WorkOrder {
+  id                     String         @id @db.Uuid
+  roomId                 String         @db.VarChar(100)
+  departmentId           String?        @db.VarChar(100)
+  reporterId             String         @db.VarChar(100)
+  assigneeId             String?        @db.VarChar(100)
+  assigneeName           String?        @db.VarChar(200)
+  repairerId             String?        @db.VarChar(100)
+  category               String         @db.VarChar(200)
+  description            String         @db.VarChar(1000)
+  status                 String         @default("NEW") @db.VarChar(30)
+  revision               Int            @default(1)
+  policyId               String         @db.VarChar(100)
+  policyRevision         Int
+  responseDeadlineAt     DateTime       @db.Timestamptz(3)
+  repairDeadlineAt       DateTime?      @db.Timestamptz(3)
+  acceptanceDeadlineAt   DateTime?      @db.Timestamptz(3)
+  repairRound            Int            @default(1)
+  blockStartsAt          DateTime?      @db.Timestamptz(3)
+  escalationRecipientIds Json
+  rating                 Int?
+  ratingComment          String?        @db.VarChar(1000)
+  syncError              String?        @db.VarChar(100)
+  createdAt              DateTime       @default(now()) @db.Timestamptz(3)
+  updatedAt              DateTime       @default(now()) @updatedAt @db.Timestamptz(3)
+  policy                 M3Policy       @relation(fields: [policyId, policyRevision], references: [id, revision])
+  assignments            M3Assignment[]
+  outbox                 M3Outbox[]
+  events                 M3AuditEvent[]
+  escalations            M3Escalation[]
+
+  @@index([reporterId, id])
+  @@index([assigneeId, id])
+  @@index([status, responseDeadlineAt])
+  @@index([status, repairDeadlineAt])
+  @@index([status, acceptanceDeadlineAt])
+  @@map("m3_work_order")
+}
+
+model M3Assignment {
+  id           String      @id @db.Uuid
+  workOrderId  String      @db.Uuid
+  revision     Int
+  assigneeId   String      @db.VarChar(100)
+  assigneeName String      @db.VarChar(200)
+  assignedBy   String      @db.VarChar(100)
+  reason       String      @db.VarChar(1000)
+  createdAt    DateTime    @default(now()) @db.Timestamptz(3)
+  workOrder    M3WorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+
+  @@unique([workOrderId, revision])
+  @@map("m3_assignment")
+}
+
+model M3WriteReceipt {
+  id          String   @id @db.VarChar(200)
+  fingerprint String   @db.Char(64)
+  result      Json
+  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+
+  @@map("m3_write_receipt")
+}
+
+model M3Outbox {
+  operationId       String      @id @db.Uuid
+  workOrderId       String      @db.Uuid
+  workOrderRevision Int
+  kind              String      @db.VarChar(20)
+  actorId           String      @db.VarChar(100)
+  reason            String      @db.VarChar(1000)
+  startsAt          DateTime?   @db.Timestamptz(3)
+  state             String      @default("READY") @db.VarChar(20)
+  attempts          Int         @default(0)
+  availableAt       DateTime    @default(now()) @db.Timestamptz(3)
+  leaseToken        String?     @db.Uuid
+  leasedUntil       DateTime?   @db.Timestamptz(3)
+  lastError         String?     @db.VarChar(100)
+  createdAt         DateTime    @default(now()) @db.Timestamptz(3)
+  finishedAt        DateTime?   @db.Timestamptz(3)
+  workOrder         M3WorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+
+  @@unique([workOrderId, workOrderRevision])
+  @@index([state, availableAt])
+  @@map("m3_outbox")
+}
+
+model M3AuditEvent {
+  id          String       @id @db.Uuid
+  workOrderId String?      @db.Uuid
+  actorId     String       @db.VarChar(100)
+  action      String       @db.VarChar(100)
+  data        Json
+  createdAt   DateTime     @default(now()) @db.Timestamptz(3)
+  workOrder   M3WorkOrder? @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+
+  @@index([workOrderId, createdAt])
+  @@map("m3_audit_event")
+}
+
+model M3Escalation {
+  id           String      @id @db.Uuid
+  workOrderId  String      @db.Uuid
+  stage        String      @db.VarChar(20)
+  round        Int
+  level        Int         @default(1)
+  deadlineAt   DateTime    @db.Timestamptz(3)
+  recipientIds Json
+  createdAt    DateTime    @default(now()) @db.Timestamptz(3)
+  workOrder    M3WorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+
+  @@unique([workOrderId, stage, round])
+  @@map("m3_escalation")
+}
