@@ -1,3 +1,5 @@
+import { BookingSupportService } from './booking-support.service.js';
+import { BookingPolicyDto } from './booking-support.dto.js';
 import {
   BadRequestException,
   Body,
@@ -7,6 +9,7 @@ import {
   Headers,
   HttpCode,
   Param,
+  ParseUUIDPipe,
   Patch,
   Post,
   Put,
@@ -30,6 +33,7 @@ import { SessionGuard, RequirePermission, type IdentityRequest } from './session
 @UseGuards(SessionGuard)
 export class DController {
   constructor(
+    private readonly support: BookingSupportService,
     private readonly identities: IdentityService,
     private readonly directory: DirectoryService,
     private readonly services: ServiceIdentityService,
@@ -258,26 +262,37 @@ export class DController {
 
   @Get('api/v1/settings/booking-policy')
   @RequirePermission('authenticated')
-  getBookingPolicy(): never {
-    return notImplemented('getBookingPolicy');
+  getBookingPolicy() {
+    return this.support.policy();
   }
 
   @Put('api/v1/settings/booking-policy')
   @RequirePermission('d.settings.write')
-  setBookingPolicy(): never {
-    return notImplemented('setBookingPolicy');
+  setBookingPolicy(
+    @Req() req: IdentityRequest,
+    @Body() input: BookingPolicyDto,
+    @Headers('idempotency-key') key: string | undefined,
+  ) {
+    if (!key || !isUUID(key)) throw new BadRequestException('Idempotency-Key must be a UUID');
+    return this.support.setPolicy(req.identity, input, key, String(req.id));
   }
 
   @Get('api/v1/notifications')
   @RequirePermission('authenticated')
-  listNotifications(): never {
-    return notImplemented('listNotifications');
+  listNotifications(@Req() req: IdentityRequest, @Query() query: PageDto) {
+    return this.support.notifications(req.identity, query);
   }
 
   @Post('api/v1/notifications/:notificationId/read')
   @RequirePermission('authenticated')
-  markNotificationRead(): never {
-    return notImplemented('markNotificationRead');
+  @HttpCode(204)
+  async markNotificationRead(
+    @Req() req: IdentityRequest,
+    @Param('notificationId', new ParseUUIDPipe()) id: string,
+    @Headers('idempotency-key') key: string | undefined,
+  ) {
+    if (!key || !isUUID(key)) throw new BadRequestException('Idempotency-Key must be a UUID');
+    await this.support.read(req.identity, id, key);
   }
 
   @Get('api/v1/audit-events')

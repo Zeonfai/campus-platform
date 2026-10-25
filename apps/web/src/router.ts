@@ -6,6 +6,8 @@ export const router = createRouter({
   history: createWebHistory(),
   routes: [
     { path: '/', component: WorkspaceOverview },
+    { path: '/notifications', component: () => import('./modules/d/NotificationsPage.vue') },
+    { path: '/booking-operations', component: () => import('./modules/m1/OperationsPage.vue') },
     { path: '/bookings', component: () => import('./modules/m1/BookingPage.vue') },
     { path: '/work-orders', component: () => import('./modules/m3/WorkOrderPage.vue') },
     { path: '/applications', component: () => import('./modules/m2/ApplicationPage.vue') },

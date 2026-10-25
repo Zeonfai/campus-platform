@@ -4,6 +4,7 @@ import {
   Controller,
   Get,
   Headers,
+  Header,
   HttpCode,
   Param,
   ParseUUIDPipe,
@@ -19,6 +20,9 @@ import { SessionGuard, RequirePermission, type IdentityRequest } from '../d/sess
 import { ServiceIdentityService } from '../d/service-identity.service.js';
 import {
   AvailabilityDto,
+  CheckInDto,
+  IntervalDto,
+  OperationsQueryDto,
   BookingDto,
   OccupancyDto,
   MaintenanceDto,
@@ -26,11 +30,14 @@ import {
   ResourceCommandDto,
 } from './scheduling.dto.js';
 import { SchedulingService } from './scheduling.service.js';
-import { notImplemented } from '../../platform/not-implemented.js';
+import { BookingLifecycleService } from './booking-lifecycle.service.js';
+import { BookingOperationsService } from './booking-operations.service.js';
 
 @Controller()
 export class M1Controller {
   constructor(
+    private readonly lifecycle: BookingLifecycleService,
+    private readonly operations: BookingOperationsService,
     private readonly scheduling: SchedulingService,
     private readonly services: ServiceIdentityService,
   ) {}
@@ -84,28 +91,55 @@ export class M1Controller {
   }
 
   @Post('api/v1/bookings/:bookingId/check-in')
-  checkIn(): never {
-    return notImplemented('checkIn');
+  @UseGuards(SessionGuard)
+  @RequirePermission('authenticated')
+  @HttpCode(200)
+  checkIn(
+    @Req() req: IdentityRequest,
+    @Param('bookingId', new ParseUUIDPipe()) id: string,
+    @Body() input: CheckInDto,
+    @Headers('idempotency-key') key: string | undefined,
+  ) {
+    return this.lifecycle.checkIn(req.identity, id, input.code, this.key(key), String(req.id));
   }
 
   @Post('api/v1/bookings/:bookingId/repeat')
-  repeatBooking(): never {
-    return notImplemented('repeatBooking');
+  @UseGuards(SessionGuard)
+  @RequirePermission('m1.bookings.create')
+  @HttpCode(200)
+  repeatBooking(
+    @Req() req: IdentityRequest,
+    @Param('bookingId', new ParseUUIDPipe()) id: string,
+    @Body() input: IntervalDto,
+    @Headers('idempotency-key') key: string | undefined,
+  ) {
+    return this.lifecycle.repeat(req.identity, id, input, this.key(key), String(req.id));
   }
 
   @Get('api/v1/rooms/:roomId/check-in-code')
-  getRoomCheckInCode(): never {
-    return notImplemented('getRoomCheckInCode');
+  @UseGuards(SessionGuard)
+  @RequirePermission('m1.checkin-code.display')
+  @Header('Cache-Control', 'no-store')
+  getRoomCheckInCode(@Req() req: IdentityRequest, @Param('roomId') id: string) {
+    return this.lifecycle.code(req.identity, id);
   }
 
   @Get('api/v1/rooms/:roomId/resource-reasons')
-  listResourceReasons(): never {
-    return notImplemented('listResourceReasons');
+  @UseGuards(SessionGuard)
+  @RequirePermission('m1.resource-reasons.read')
+  listResourceReasons(
+    @Req() req: IdentityRequest,
+    @Param('roomId') id: string,
+    @Query() query: OperationsQueryDto,
+  ) {
+    return this.operations.reasons(req.identity, id, query);
   }
 
   @Get('api/v1/statistics/bookings')
-  bookingStatistics(): never {
-    return notImplemented('bookingStatistics');
+  @UseGuards(SessionGuard)
+  @RequirePermission('m1.statistics.read')
+  bookingStatistics(@Req() req: IdentityRequest, @Query() query: OperationsQueryDto) {
+    return this.operations.statistics(req.identity, query);
   }
 
   @Put('internal/v1/room-occupancies/:applicationId')

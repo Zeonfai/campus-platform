@@ -251,6 +251,28 @@ try {
         update: {},
       });
     }
+    for (const [id, name, scope, userId] of [
+      ['demo-role-m1-managed-v1', '演示预约教室运营', 'MANAGED_ROOMS', 'demo-user-manager-a'],
+      ['demo-role-m1-department-v1', '演示预约院系运营', 'DEPARTMENT', 'demo-user-department-a'],
+    ] as const) {
+      await tx.dRole.upsert({
+        where: { id },
+        create: {
+          id,
+          name,
+          scope,
+          permissions: {
+            create: [
+              'm1.checkin-code.display',
+              'm1.resource-reasons.read',
+              'm1.statistics.read',
+            ].map((permissionId) => ({ permissionId })),
+          },
+          users: { create: { userId } },
+        },
+        update: {},
+      });
+    }
     await tx.dRole.upsert({
       where: { id: 'demo-role-booker-v1' },
       create: {

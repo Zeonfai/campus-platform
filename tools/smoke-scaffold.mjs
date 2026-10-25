@@ -105,12 +105,9 @@ async function checkService(service, operationPath) {
       headers: { 'content-type': 'application/json' },
       body: '{}',
     });
-    const expectedOperationStatus = service === 'workflow' ? 401 : 501;
+    const expectedOperationStatus = 401;
     assert.equal(stub.status, expectedOperationStatus);
-    assert.equal(
-      (await stub.json()).error.code,
-      service === 'workflow' ? 'UNAUTHENTICATED' : 'NOT_IMPLEMENTED',
-    );
+    assert.equal((await stub.json()).error.code, 'UNAUTHENTICATED');
 
     const absent = await fetch(`${origin}/this-route-does-not-exist`);
     assert.equal(absent.status, 404);
@@ -126,7 +123,7 @@ async function checkService(service, operationPath) {
       }
     }
     console.log(
-      `${service}: liveness, ${withDatabase ? 'real database readiness' : 'unavailable readiness'}, ${service === 'workflow' ? 'protected operation 401' : 'explicit scaffold 501'}, 404 and scoped API docs passed`,
+      `${service}: liveness, ${withDatabase ? 'real database readiness' : 'unavailable readiness'}, protected operation 401, 404 and scoped API docs passed`,
     );
   } finally {
     if (child.exitCode === null && !spawnError) {

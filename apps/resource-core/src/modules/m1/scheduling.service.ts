@@ -1,3 +1,4 @@
+import { databaseNow } from '../../platform/transaction.js';
 import { isUUID } from 'class-validator';
 import {
   BadRequestException,
@@ -50,7 +51,7 @@ const json = (value: unknown) => JSON.parse(JSON.stringify(value)) as Prisma.Inp
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
-function booking(row: M1Booking): components['schemas']['Booking'] {
+export function booking(row: M1Booking): components['schemas']['Booking'] {
   return {
     id: row.id,
     roomId: row.roomId,
@@ -59,6 +60,12 @@ function booking(row: M1Booking): components['schemas']['Booking'] {
     startsAt: row.startsAt.toISOString(),
     endsAt: row.endsAt.toISOString(),
     status: row.status,
+    policyRevision: row.policyRevision,
+    checkInOpensAt: new Date(+row.startsAt - row.checkInBeforeMinutes * 60000).toISOString(),
+    checkInClosesAt: new Date(+row.startsAt + row.noShowAfterMinutes * 60000).toISOString(),
+    checkedInAt: row.checkedInAt?.toISOString() ?? null,
+    violationAt: row.violationAt?.toISOString() ?? null,
+    cancelReason: row.cancelReason,
   };
 }
 function effect(row: M1ResourceEffect): ResourceEffect {
@@ -120,9 +127,19 @@ export class SchedulingService {
       select: { sourceId: true },
     }));
   }
-  async reserve(identity: Identity, input: BookingDto, key: string, traceId: string) {
+  async reserve(
+    identity: Identity,
+    input: BookingDto,
+    key: string,
+    traceId: string,
+    repeatSource?: string,
+  ) {
     const [start, end] = parseInterval(input.startsAt, input.endsAt);
-    const digest = fingerprint(['reserve', input.seatId, start.toISOString(), end.toISOString()]);
+    const digest = fingerprint(
+      repeatSource
+        ? ['repeat', repeatSource, input.seatId, start.toISOString(), end.toISOString()]
+        : ['reserve', input.seatId, start.toISOString(), end.toISOString()],
+    );
     return this.db.$transaction(async (tx) => {
       const receipt = await this.receipt(tx, identity.user.id, key, digest);
       if (receipt.previous) return receipt.previous.result;
@@ -131,9 +148,11 @@ export class SchedulingService {
       const seat = await this.directory.seat(tx, input.seatId);
       this.directory.requireRoom(identity, seat.room, 'm1.bookings.create', true);
       if (!seat.enabled || !seat.room.enabled) throw new ConflictException('Resource is disabled');
-      if (start.getTime() <= Date.now())
+      const now = await databaseNow(tx);
+      const policy = await tx.dBookingPolicy.findUniqueOrThrow({ where: { id: 'default' } });
+      if (start.getTime() <= +now)
         throw new BadRequestException('Booking must start in the future');
-      if (end.getTime() - start.getTime() > (await this.directory.maxHours(tx)) * 3600000)
+      if (end.getTime() - start.getTime() > policy.maxHours * 3600000)
         throw new BadRequestException('Booking exceeds maximum duration');
       if (!(await this.directory.isOpen(tx, seat.roomId, start, end)))
         throw new ConflictException('Room is outside its configured opening hours');
@@ -149,6 +168,12 @@ export class SchedulingService {
             startsAt: start,
             endsAt: end,
             status: 'BOOKED',
+            policyRevision: policy.revision,
+            checkInBeforeMinutes: policy.checkInBeforeMinutes,
+            noShowAfterMinutes: policy.noShowAfterMinutes,
+            reminderBeforeAt: new Date(+start - policy.reminderBeforeMinutes * 60000),
+            reminderAfterAt: new Date(+start + policy.reminderAfterMinutes * 60000),
+            nextActionAt: new Date(+start - policy.reminderBeforeMinutes * 60000),
           },
         }),
       );
@@ -173,12 +198,17 @@ export class SchedulingService {
         throw new NotFoundException('Booking not found');
       await schedulingLock(tx, `room:${initial.roomId}`);
       const current = await tx.m1Booking.findUniqueOrThrow({ where: { id } });
-      if (current.status !== 'BOOKED' || current.startsAt.getTime() <= Date.now())
+      if (current.status !== 'BOOKED' || current.startsAt.getTime() <= +(await databaseNow(tx)))
         throw new UnprocessableEntityException('Booking can only be cancelled before it starts');
       const result = booking(
         await tx.m1Booking.update({
           where: { id },
-          data: { status: 'CANCELLED', cancelReason: reason, cancelledAt: new Date() },
+          data: {
+            status: 'CANCELLED',
+            cancelReason: reason,
+            cancelledAt: new Date(),
+            nextActionAt: null,
+          },
         }),
       );
       await tx.m1WriteReceipt.create({
@@ -399,6 +429,7 @@ export class SchedulingService {
               throw new ConflictException('Room has conflicting allocations');
           }
         }
+        const resourceNow = await databaseNow(tx);
         const row = await tx.m1ResourceEffect.upsert({
           where: { sourceModule_sourceId: { sourceModule, sourceId: id } },
           create: {
@@ -412,6 +443,7 @@ export class SchedulingService {
             operationId: input.operationId,
             actorId: input.actorId,
             reason: input.reason,
+            releasedAt: release ? resourceNow : null,
           },
           update: {
             state: release ? 'RELEASED' : 'ACTIVE',
@@ -419,6 +451,7 @@ export class SchedulingService {
             operationId: input.operationId,
             actorId: input.actorId,
             reason: input.reason,
+            ...(release && !current?.releasedAt ? { releasedAt: resourceNow } : {}),
           },
         });
         response = json(effect(row));

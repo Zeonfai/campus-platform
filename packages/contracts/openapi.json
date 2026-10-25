@@ -2808,7 +2808,7 @@
         "description": "",
         "tags": ["D"],
         "x-service": "resource-core",
-        "x-implementation": "scaffold",
+        "x-implementation": "implemented",
         "x-permission": "authenticated",
         "parameters": [],
         "security": [
@@ -2818,7 +2818,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Target behavior; not implemented in this scaffold",
+            "description": "Implemented response; see TASK-009 initial rules.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2899,16 +2899,6 @@
           },
           "500": {
             "description": "Request rejected",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
-          "501": {
-            "description": "NOT_IMPLEMENTED: current scaffold response",
             "content": {
               "application/json": {
                 "schema": {
@@ -2935,7 +2925,7 @@
         "description": "",
         "tags": ["D"],
         "x-service": "resource-core",
-        "x-implementation": "scaffold",
+        "x-implementation": "implemented",
         "x-permission": "d.settings.write",
         "parameters": [
           {
@@ -2956,7 +2946,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Target behavior; not implemented in this scaffold",
+            "description": "Implemented response; see TASK-009 initial rules.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3037,16 +3027,6 @@
           },
           "500": {
             "description": "Request rejected",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
-          "501": {
-            "description": "NOT_IMPLEMENTED: current scaffold response",
             "content": {
               "application/json": {
                 "schema": {
@@ -3085,7 +3065,7 @@
         "description": "",
         "tags": ["D"],
         "x-service": "resource-core",
-        "x-implementation": "scaffold",
+        "x-implementation": "implemented",
         "x-permission": "authenticated",
         "parameters": [
           {
@@ -3115,7 +3095,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Target behavior; not implemented in this scaffold",
+            "description": "Implemented response; see TASK-009 initial rules.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3204,16 +3184,6 @@
               }
             }
           },
-          "501": {
-            "description": "NOT_IMPLEMENTED: current scaffold response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Dependency unavailable or result unknown",
             "content": {
@@ -3234,7 +3204,7 @@
         "description": "",
         "tags": ["D"],
         "x-service": "resource-core",
-        "x-implementation": "scaffold",
+        "x-implementation": "implemented",
         "x-permission": "authenticated",
         "parameters": [
           {
@@ -3265,7 +3235,7 @@
         ],
         "responses": {
           "204": {
-            "description": "Target behavior; not implemented in this scaffold"
+            "description": "Implemented response; see TASK-009 initial rules."
           },
           "400": {
             "description": "Request rejected",
@@ -3339,16 +3309,6 @@
           },
           "500": {
             "description": "Request rejected",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
-          "501": {
-            "description": "NOT_IMPLEMENTED: current scaffold response",
             "content": {
               "application/json": {
                 "schema": {
@@ -4259,7 +4219,7 @@
         "description": "",
         "tags": ["M1"],
         "x-service": "resource-core",
-        "x-implementation": "scaffold",
+        "x-implementation": "implemented",
         "x-permission": "authenticated",
         "parameters": [
           {
@@ -4290,7 +4250,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Target behavior; not implemented in this scaffold",
+            "description": "Implemented response; see TASK-009 initial rules.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4371,16 +4331,6 @@
           },
           "500": {
             "description": "Request rejected",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
-          "501": {
-            "description": "NOT_IMPLEMENTED: current scaffold response",
             "content": {
               "application/json": {
                 "schema": {
@@ -4419,8 +4369,8 @@
         "description": "",
         "tags": ["M1"],
         "x-service": "resource-core",
-        "x-implementation": "scaffold",
-        "x-permission": "authenticated",
+        "x-implementation": "implemented",
+        "x-permission": "m1.bookings.create",
         "parameters": [
           {
             "name": "bookingId",
@@ -4450,7 +4400,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Target behavior; not implemented in this scaffold",
+            "description": "Implemented response; see TASK-009 initial rules.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4539,16 +4489,6 @@
               }
             }
           },
-          "501": {
-            "description": "NOT_IMPLEMENTED: current scaffold response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Dependency unavailable or result unknown",
             "content": {
@@ -4565,7 +4505,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/BookingInput"
+                "$ref": "#/components/schemas/RepeatBookingInput"
               }
             }
           }
@@ -4579,7 +4519,7 @@
         "description": "",
         "tags": ["M1"],
         "x-service": "resource-core",
-        "x-implementation": "scaffold",
+        "x-implementation": "implemented",
         "x-permission": "m1.checkin-code.display",
         "parameters": [
           {
@@ -4600,7 +4540,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Target behavior; not implemented in this scaffold",
+            "description": "Implemented response; see TASK-009 initial rules.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4689,16 +4629,6 @@
               }
             }
           },
-          "501": {
-            "description": "NOT_IMPLEMENTED: current scaffold response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Dependency unavailable or result unknown",
             "content": {
@@ -4719,7 +4649,7 @@
         "description": "",
         "tags": ["M1"],
         "x-service": "resource-core",
-        "x-implementation": "scaffold",
+        "x-implementation": "implemented",
         "x-permission": "m1.resource-reasons.read",
         "parameters": [
           {
@@ -4750,6 +4680,24 @@
               "minLength": 1,
               "maxLength": 200
             }
+          },
+          {
+            "name": "startsAt",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "endsAt",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
           }
         ],
         "security": [
@@ -4759,7 +4707,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Target behavior; not implemented in this scaffold",
+            "description": "Implemented response; see TASK-009 initial rules.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4848,16 +4796,6 @@
               }
             }
           },
-          "501": {
-            "description": "NOT_IMPLEMENTED: current scaffold response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Dependency unavailable or result unknown",
             "content": {
@@ -4878,7 +4816,7 @@
         "description": "",
         "tags": ["M1"],
         "x-service": "resource-core",
-        "x-implementation": "scaffold",
+        "x-implementation": "implemented",
         "x-permission": "m1.statistics.read",
         "parameters": [
           {
@@ -4899,6 +4837,32 @@
               "minLength": 1,
               "maxLength": 200
             }
+          },
+          {
+            "name": "startsAt",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "endsAt",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "roomId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            }
           }
         ],
         "security": [
@@ -4908,7 +4872,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Target behavior; not implemented in this scaffold",
+            "description": "Implemented response; see TASK-009 initial rules.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4989,16 +4953,6 @@
           },
           "500": {
             "description": "Request rejected",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
-          "501": {
-            "description": "NOT_IMPLEMENTED: current scaffold response",
             "content": {
               "application/json": {
                 "schema": {
@@ -9601,10 +9555,37 @@
           "revision": {
             "type": "integer",
             "minimum": 1,
-            "maximum": 9007199254740991
+            "maximum": 2147483647
+          },
+          "checkInBeforeMinutes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 60
+          },
+          "reminderBeforeMinutes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 60
+          },
+          "reminderAfterMinutes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 59
+          },
+          "noShowAfterMinutes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 60
           }
         },
-        "required": ["maxHours", "revision"]
+        "required": [
+          "maxHours",
+          "revision",
+          "checkInBeforeMinutes",
+          "reminderBeforeMinutes",
+          "reminderAfterMinutes",
+          "noShowAfterMinutes"
+        ]
       },
       "BookingInput": {
         "type": "object",
@@ -9670,6 +9651,29 @@
           "maintenanceAffected": {
             "type": "boolean",
             "description": "Current active maintenance affects this booking interval; reservation status remains unchanged. Present on owner detail/list responses."
+          },
+          "checkInOpensAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "checkInClosesAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "checkedInAt": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          },
+          "violationAt": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          },
+          "cancelReason": {
+            "type": ["string", "null"]
+          },
+          "policyRevision": {
+            "type": "integer",
+            "minimum": 1
           }
         },
         "required": ["id", "seatId", "roomId", "userId", "startsAt", "endsAt", "status"]
@@ -9692,8 +9696,8 @@
         "properties": {
           "code": {
             "type": "string",
-            "minLength": 1,
-            "maxLength": 32,
+            "minLength": 8,
+            "maxLength": 8,
             "writeOnly": true
           }
         },
@@ -9749,7 +9753,21 @@
           "reason": {
             "type": "string",
             "minLength": 1,
-            "maxLength": 200
+            "maxLength": 1000
+          },
+          "state": {
+            "type": "string"
+          },
+          "startsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endsAt": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          },
+          "seatId": {
+            "type": "string"
           }
         },
         "required": ["sourceModule", "sourceId", "reason"]
@@ -10293,6 +10311,21 @@
           },
           "checkedInHours": {
             "type": "number",
+            "minimum": 0
+          },
+          "roomName": {
+            "type": "string"
+          },
+          "bookingCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "noShowCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "cancelledCount": {
+            "type": "integer",
             "minimum": 0
           }
         },
@@ -10873,6 +10906,23 @@
           }
         },
         "required": ["room", "escalationRecipientIds"]
+      },
+      "RepeatBookingInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "startsAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "RFC3339 with timezone; booking intervals use [start,end)."
+          },
+          "endsAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "RFC3339 with timezone; booking intervals use [start,end)."
+          }
+        },
+        "required": ["startsAt", "endsAt"]
       }
     },
     "securitySchemes": {

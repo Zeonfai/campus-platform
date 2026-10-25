@@ -282,3 +282,27 @@ button:disabled {
 .booking-row p {
   margin: 8px 0 0;
 }
+
+.notification-list {
+  display: grid;
+  gap: 16px;
+  margin: 24px 0;
+}
+.operations-panel {
+  margin-bottom: 24px;
+}
+.operations-panel h2:not(:first-child) {
+  margin-top: 28px;
+}
+.operations-panel .booking-search {
+  margin-top: 18px;
+}
+.check-in-display {
+  margin-top: 20px;
+}
+.check-in-display strong {
+  display: block;
+  font-size: clamp(28px, 5vw, 48px);
+  font-family: ui-monospace, monospace;
+  letter-spacing: 0.18em;
+}

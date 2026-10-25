@@ -27,6 +27,8 @@ async function logout(): Promise<void> {
       <RouterLink class="brand" to="/">校园资源<span>服务平台 · 工程预览</span></RouterLink>
       <nav aria-label="主导航">
         <RouterLink to="/">工作区概览</RouterLink>
+        <RouterLink v-if="session.loggedIn" to="/notifications">我的通知</RouterLink>
+        <RouterLink v-if="session.loggedIn" to="/booking-operations">预约管理与规则</RouterLink>
         <RouterLink v-if="session.loggedIn" to="/bookings">预约自习座位</RouterLink>
         <RouterLink v-if="session.loggedIn" to="/work-orders">物业报修与维修</RouterLink>
         <RouterLink v-if="session.loggedIn" to="/applications">整教室申请与审批</RouterLink>
@@ -44,7 +46,7 @@ async function logout(): Promise<void> {
         </button>
         <p v-if="logoutError" role="alert">{{ logoutError }}</p>
       </div>
-      <p class="sidebar-note">身份、预约、审批和维修已接入<br />签到与管理功能继续完善</p>
+      <p class="sidebar-note">身份、预约、审批和维修已接入<br />签到与站内通知已接入</p>
     </aside>
     <main class="content"><RouterView /></main>
   </div>

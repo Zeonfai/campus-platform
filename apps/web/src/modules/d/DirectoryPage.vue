@@ -87,7 +87,9 @@ const powers = { NONE: '无插座', FIXED: '固定插座', RAIL: '移动导轨�
     <h1>教室与座位</h1>
     <p>当前账号：{{ session.user?.displayName }}。仅显示后端授权范围内的目录。</p>
   </header>
-  <p class="notice">本页展示资源登记信息。预约可用性查询和预约操作将在 M1 接入后提供。</p>
+  <p class="notice">
+    本页展示资源登记信息。可用座位请到“预约自习座位”查询；管理范围内的占用来源请到“预约管理与规则”查看。
+  </p>
   <p v-if="error" role="alert" class="form-error">{{ error }}</p>
   <div class="panel-heading">
     <h2>可查看的教室</h2>
