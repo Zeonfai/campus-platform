@@ -30,15 +30,17 @@ enum DPowerType {
 }
 
 model DDepartment {
-  id    String  @id @db.VarChar(100)
-  name  String  @unique @db.VarChar(200)
-  users DUser[]
-  rooms DRoom[]
+  revision Int     @default(1)
+  id       String  @id @db.VarChar(100)
+  name     String  @unique @db.VarChar(200)
+  users    DUser[]
+  rooms    DRoom[]
 
   @@map("d_departments")
 }
 
 model DUser {
+  revision      Int             @default(1)
   id            String          @id @db.VarChar(100)
   username      String          @unique @db.VarChar(200)
   displayName   String          @db.VarChar(200)
@@ -59,6 +61,7 @@ model DUser {
 }
 
 model DRole {
+  revision    Int               @default(1)
   id          String            @id @db.VarChar(100)
   name        String            @unique @db.VarChar(200)
   scope       DScope
@@ -98,6 +101,7 @@ model DRolePermission {
 }
 
 model DRoom {
+  revision               Int                @default(1)
   id                     String             @id @db.VarChar(100)
   code                   String             @unique @db.VarChar(200)
   name                   String             @db.VarChar(200)
@@ -117,6 +121,7 @@ model DRoom {
 }
 
 model DSeat {
+  revision  Int         @default(1)
   id        String      @id @db.VarChar(100)
   roomId    String      @db.VarChar(100)
   room      DRoom       @relation(fields: [roomId], references: [id], onDelete: Restrict)
@@ -162,6 +167,7 @@ model DLoginBucket {
 }
 
 model DAuditEvent {
+  reason    String?  @db.VarChar(1000)
   id        String   @id @db.Uuid
   actorId   String   @db.VarChar(100)
   action    String   @db.VarChar(100)

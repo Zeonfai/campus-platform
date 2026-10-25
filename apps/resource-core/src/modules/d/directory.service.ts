@@ -44,6 +44,7 @@ export class DirectoryService {
             departmentId: true,
             enabled: true,
             restrictedToDepartment: true,
+            revision: true,
           },
           orderBy: { id: 'asc' },
           take: query.limit + 1,
@@ -67,7 +68,14 @@ export class DirectoryService {
     return page(
       await this.db.dSeat.findMany({
         where: { roomId, ...(query.cursor ? { id: { gt: query.cursor } } : {}) },
-        select: { id: true, roomId: true, code: true, enabled: true, powerType: true },
+        select: {
+          id: true,
+          roomId: true,
+          code: true,
+          enabled: true,
+          powerType: true,
+          revision: true,
+        },
         orderBy: { id: 'asc' },
         take: query.limit + 1,
       }),
@@ -91,7 +99,7 @@ export class DirectoryService {
     return page(
       await this.db.dDepartment.findMany({
         where: { AND: [allowed, ...(query.cursor ? [{ id: { gt: query.cursor } }] : [])] },
-        select: { id: true, name: true },
+        select: { id: true, name: true, revision: true },
         orderBy: { id: 'asc' },
         take: query.limit + 1,
       }),

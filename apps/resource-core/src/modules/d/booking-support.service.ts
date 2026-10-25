@@ -11,12 +11,16 @@ import type { Prisma } from '../../generated/prisma/client.js';
 import { PrismaService } from '../../platform/prisma.service.js';
 import { transactionLock } from '../../platform/transaction.js';
 import type { Identity } from './identity.service.js';
+import { ResourceDirectoryService } from './resource-directory.service.js';
 import type { PageDto } from './identity.dto.js';
 import type { BookingPolicyDto } from './booking-support.dto.js';
 type Tx = Prisma.TransactionClient;
 @Injectable()
 export class BookingSupportService {
-  constructor(private readonly db: PrismaService) {}
+  constructor(
+    private readonly db: PrismaService,
+    private readonly resources: ResourceDirectoryService,
+  ) {}
   async notify(tx: Tx, userId: string, eventKey: string, title: string, body: string) {
     await tx.dNotification.upsert({
       where: { userId_eventKey: { userId, eventKey } },
@@ -88,6 +92,10 @@ export class BookingSupportService {
         input.reminderAfterMinutes,
         input.noShowAfterMinutes,
       ]);
+      await transactionLock(tx, 'd-security-admin');
+      const actor = await this.resources.actor(tx, identity.user.id);
+      if (!actor.grants.some((g) => g.permission === 'd.settings.write' && g.scope === 'ALL'))
+        throw new ForbiddenException('Global settings permission required');
       if (receipt.previous) return receipt.previous.result;
       await transactionLock(tx, 'booking-policy:default');
       const previous = await tx.dBookingPolicy.findUniqueOrThrow({ where: { id: 'default' } });

@@ -1,20 +1,24 @@
 # 校园资源服务平台
 
+2026-10-26保存说明：用户已明确授权推送feat/admin-management，供10月27日体验后通过PR合并main；提交/推送和平台检查以GitHub实际记录为准。尚未人工验收，不自动合并。验收与剩余事项见 [当前检查点](docs/checkpoints/2026-10-26-review.md)。
+
 六人课程项目：M1 座位预约、M2 整室申请审批、M3 物业报修、D 公共能力。
 
 ## 初版与当前状态
 
-2026-10-22：用户已粗验原有主要流程，初版已提交并推送到 [GitHub 仓库](https://github.com/Zeonfai/campus-platform)，首次提交74822b9；仓库已开始邀请协作。原初版范围见 [v0.1.0说明](docs/releases/v0.1.0.md)，不表示全任务书验收或生产发布。
+2026-10-22原主要流程已粗验，首次提交74822b9已推送 [GitHub仓库](https://github.com/Zeonfai/campus-platform)并邀请协作。TASK-009签到生命周期随后已按用户明确授权提交5d1a3f7、推送feat/booking-lifecycle；这不表示已合并main或完成全部人工验收。
 
-2026-10-25：按用户授权继续补齐简单可体验方案。当前契约62个操作：50个实现、12个占位，分别为D16、M1 16、M2 7、M3 11。新增签到/每日教室码、持久站内提醒、未签到取消与免罚、再次预约、来源查询、统计，以及D预约政策读写和本人通知/已读。前端已接入“我的通知”和“预约管理与规则”；本轮新增变更尚未人工体验、提交或推送，不能把接口数量当需求完成率。
+2026-10-26继续TASK-010公共管理初版：当前63个操作全部已有实现（D29、M1 16、M2 7、M3 11），新增读取开放规则接口。/admin接入院系登记/改名、角色权限、已有用户启停/授权、房间座位登记/修改/停用、全周开放规则和core审计。常规资料注册指院系/房间/座位；不提供公开用户注册或改密码。当前feat/admin-management未人工体验、提交或推送，接口数量不是任务书完成率。
 
-默认签到窗口为开始前15分钟至开始后15分钟（截止时刻不含）；提醒为开始前15分钟和开始后10分钟，超时取消并只记一次违约，初版不自动封禁。政策修改只影响新预约；历史预约不追溯处罚，资源停用或签到窗口受维修影响时取消但免违约。维修来源保存首次releasedAt，重复释放不延长影响时间。规则、统计口径和后续待办见 [TASK-009方案](docs/implementation/task-009-booking-lifecycle.md)。
+管理写受精确权限范围、授予上限、版本与持久幂等保护，禁止本人改本人授权；全局安全锁和锁后操作者重读保护并发撤权及最后管理员。房间创建后固定院系/专属属性，启停与开放规则竞争M1教室锁、保留既有记录。开放规则按整周替换、周一1至周日7、支持24:00；读取使用同一数据库快照。页面409后草稿失效，必须重新载入，不能把旧输入自动配新版本。详见 [TASK-010方案](docs/implementation/task-010-admin-management.md)。
 
-截至10月26日，本轮pnpm check、扩展后生命周期9组、身份8组、调度7组、M2独立重跑8组、M3回归12组、真实数据库检查、两库空表重放/种子不变及Prisma schema diff均通过。错码守卫隔离破坏时测试由预期400变为200而失败，逐字节恢复后9组重过；M2首次401/400差异保留事实，独立复跑未复现，不宣称根因已修。详见 [本轮验证](docs/verification/2026-10-26-booking-lifecycle.md)。旧版本的 [10月21日维修验证](docs/verification/2026-10-21-workorders.md)属于历史证据。M2/M3仍经真实HTTP调用core，两个服务各用独立数据库与账号，禁止跨库读写。
+最终本地bash tools/ci-check.sh已退出0：修复后pnpm check、真实数据库、core5迁移22表重放/seed不变、身份8组/调度7组/M2 8组/M3 12组、两套workflow数据验证、生命周期9组与管理11组全部通过，两服务schema diff为空。管理第10组验证政策撤权后403且政策不变，第11组验证互停管理员并发。last-admin守卫隔离破坏曾预期409实际200而失败，逐字节恢复后10组绿，最终CI入口11组通过。此处为本地结果，GitHub Actions平台仍未执行。 详情汇总至 [管理验证](docs/verification/2026-10-26-admin-management.md)；上轮 [签到验证](docs/verification/2026-10-26-booking-lifecycle.md)与更早记录保留当时事实，不替代本轮结果。
 
-尚缺D主数据/RBAC/开放规则/审计查询等12个接口、真实外部通知、CI与云部署、违约申诉和进一步人工验收。M3 SLA升级事件尚未投递到外部渠道；永久撤权的释放执行人可能持续RELEASE_PENDING + syncError，仍须恢复合法资格再补偿。站内消息可查看不代表邮件或微信已发送。
+原签到规则保留：默认[-15min,+15min)签到，-15/+10站内提醒、+15未签取消；旧预约不追溯处罚，新预约才启用违约，故障影响免罚，暂不自动封禁。新预约冻结政策，首次releasedAt不因重复释放延长。入口/bookings、/booking-operations、/notifications；管理入口/admin。
 
-Node24.22.0与pnpm10.33.4已在架构负责人WSL中安装。实际环境和验证索引见 [状态记录](docs/bootstrap-status.md)。默认方案和初版粗验不表示全组批准；本轮继续开发授权不扩张为云采购或生产发布授权。
+用户暂未提供外部提醒渠道，先完成本地与自动检查；邮件/微信等真实外部投递仍未交付，不能写成任务书豁免。CI源码和 [运行说明](docs/ci.md)已准备，官方Action固定SHA，仅本地准备，尚无GitHub Actions实际运行或合并门禁通过记录。云部署、生产审批/回退、申诉、正式身份运维和跨服务审计汇聚继续待办。
+
+core为5条已应用迁移、22张表；workflow为3条、14张表，不计Prisma迁移表。两服务分库账号与真实HTTP边界保持。工具链Node24.22.0/pnpm10.33.4，当前用户不重初始化.env或密码，不改Python环境。更多状态见 [启动索引](docs/bootstrap-status.md)。
 
 ## 先读这些文件
 
@@ -113,4 +117,4 @@ pnpm test:workorders:data
 
 本轮实现范围、会话/权限设计及未完成项见 [身份切片方案](docs/implementation/task-005-identity.md)；真实验证与故意破坏测试见 [身份验证记录](docs/verification/2026-10-15-identity.md)。
 
-团队从 [接手入口](docs/handoff/START-HERE.md) 和各自AI任务卡独立复现、认领后续切片；原初版已于10月22日推送，当前新增功能已完成本轮自动验证，仍待人工体验；不虚构人员认领。调度历史设计见 [资源内核方案](docs/implementation/task-006-resource-kernel.md)，M2 当前规则见 [工作流方案](docs/implementation/task-006-m2-workflow.md)。服务凭据没有持久写入 .env；`pnpm dev` 和相关测试提供进程身份，其他方式缺失凭据时业务 503 关闭。M3 当前规则见 [维修方案](docs/implementation/task-007-m3-workorders.md)，外部推送与专业化交付仍需继续完成。
+团队从 [接手入口](docs/handoff/START-HERE.md) 和各自AI任务卡独立复现、认领后续切片；原初版已于10月22日推送，当前TASK-010新增功能已通过本地完整检查，仍待人工体验；不虚构人员认领。调度历史设计见 [资源内核方案](docs/implementation/task-006-resource-kernel.md)，M2 当前规则见 [工作流方案](docs/implementation/task-006-m2-workflow.md)。服务凭据没有持久写入 .env；`pnpm dev` 和相关测试提供进程身份，其他方式缺失凭据时业务 503 关闭。M3 当前规则见 [维修方案](docs/implementation/task-007-m3-workorders.md)，外部推送与专业化交付仍需继续完成。

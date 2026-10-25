@@ -36,7 +36,8 @@
     "test:workflow:data": "node tools/verify-workflow-data.mjs",
     "test:workorders": "node tools/test-workorders.mjs",
     "test:workorders:data": "node tools/verify-workorders-data.mjs",
-    "test:booking-lifecycle": "node tools/test-booking-lifecycle.mjs"
+    "test:booking-lifecycle": "node tools/test-booking-lifecycle.mjs",
+    "test:admin-management": "node tools/test-admin-management.mjs"
   },
   "devDependencies": {
     "typescript": "5.9.3",

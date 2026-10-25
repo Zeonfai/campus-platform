@@ -1,12 +1,23 @@
 <script setup lang="ts">
 import { modules } from './modules/catalog';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useSession } from './modules/d/session';
 const session = useSession();
 const router = useRouter();
 const logoutError = ref('');
 const leaving = ref(false);
+const canManage = computed(() =>
+  [
+    'd.departments.write',
+    'd.roles.read',
+    'd.roles.write',
+    'd.rooms.write',
+    'd.users.read',
+    'd.users.write',
+    'd.audit.read',
+  ].some((permission) => session.user?.permissions.includes(permission)),
+);
 async function logout(): Promise<void> {
   leaving.value = true;
   logoutError.value = '';
@@ -35,6 +46,7 @@ async function logout(): Promise<void> {
         <RouterLink :to="session.loggedIn ? '/directory' : '/login'">{{
           session.loggedIn ? '教室与座位' : '登录平台'
         }}</RouterLink>
+        <RouterLink v-if="session.loggedIn && canManage" to="/admin">公共管理</RouterLink>
         <RouterLink v-for="(item, key) in modules" :key="key" :to="`/modules/${key}`">{{
           item.name
         }}</RouterLink>

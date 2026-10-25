@@ -1,3 +1,4 @@
+import { AdministrationService } from './administration.service.js';
 import { BookingSupportService } from './booking-support.service.js';
 import { Module } from '@nestjs/common';
 import { ResourceDirectoryService } from './resource-directory.service.js';
@@ -10,6 +11,7 @@ import { SessionGuard } from './session.guard.js';
 @Module({
   controllers: [DController],
   providers: [
+    AdministrationService,
     BookingSupportService,
     IdentityService,
     DirectoryService,
