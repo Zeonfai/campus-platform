@@ -47,6 +47,22 @@ export class ResourceDirectoryService {
       return;
     throw new ForbiddenException('Room is outside the authorized scope');
   }
+  requireManagedRoom(
+    identity: Identity,
+    room: { id: string; departmentId: string | null },
+    permission: string,
+  ): void {
+    const scopes = identity.grants.filter((g) => g.permission === permission).map((g) => g.scope);
+    if (
+      scopes.includes('ALL') ||
+      (scopes.includes('MANAGED_ROOMS') && identity.managedRoomIds.includes(room.id)) ||
+      (scopes.includes('DEPARTMENT') &&
+        room.departmentId !== null &&
+        room.departmentId === identity.user.departmentId)
+    )
+      return;
+    throw new ForbiddenException('Room is outside this management permission scope');
+  }
   async maxHours(tx: CoreTransaction): Promise<number> {
     const policy = await tx.dBookingPolicy.findUnique({ where: { id: 'default' } });
     if (!policy) throw new ServiceUnavailableException('Booking policy has not been initialized');

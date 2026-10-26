@@ -44,3 +44,12 @@ export class MaintenanceDto extends ResourceCommandDto {
   @IsString() @Length(1, 100) roomId!: string;
   @IsISO8601({ strict: true, strictSeparator: true }) startsAt!: string;
 }
+
+export class CheckInDto {
+  @IsString() @Length(8, 8) code!: string;
+}
+export class OperationsQueryDto extends PageDto {
+  @IsISO8601({ strict: true, strictSeparator: true }) startsAt!: string;
+  @IsISO8601({ strict: true, strictSeparator: true }) endsAt!: string;
+  @IsOptional() @IsString() @Length(1, 100) roomId?: string;
+}

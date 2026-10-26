@@ -21,6 +21,6 @@ export class PageDto {
 
   @IsOptional()
   @IsString()
-  @Length(1, 100)
+  @Length(1, 200)
   cursor?: string;
 }

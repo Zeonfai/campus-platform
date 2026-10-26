@@ -30,34 +30,38 @@ enum DPowerType {
 }
 
 model DDepartment {
-  id    String  @id @db.VarChar(100)
-  name  String  @unique @db.VarChar(200)
-  users DUser[]
-  rooms DRoom[]
+  revision Int     @default(1)
+  id       String  @id @db.VarChar(100)
+  name     String  @unique @db.VarChar(200)
+  users    DUser[]
+  rooms    DRoom[]
 
   @@map("d_departments")
 }
 
 model DUser {
-  id           String         @id @db.VarChar(100)
-  username     String         @unique @db.VarChar(200)
-  displayName  String         @db.VarChar(200)
-  passwordHash String         @db.VarChar(300)
-  enabled      Boolean        @default(true)
-  departmentId String?        @db.VarChar(100)
-  department   DDepartment?   @relation(fields: [departmentId], references: [id], onDelete: Restrict)
-  roles        DUserRole[]
-  managedRooms DManagedRoom[]
-  sessions     DSession[]
-  bookings     M1Booking[]
-  createdAt    DateTime       @default(now()) @db.Timestamptz(3)
-  updatedAt    DateTime       @default(now()) @updatedAt @db.Timestamptz(3)
+  revision      Int             @default(1)
+  id            String          @id @db.VarChar(100)
+  username      String          @unique @db.VarChar(200)
+  displayName   String          @db.VarChar(200)
+  passwordHash  String          @db.VarChar(300)
+  enabled       Boolean         @default(true)
+  departmentId  String?         @db.VarChar(100)
+  department    DDepartment?    @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+  roles         DUserRole[]
+  managedRooms  DManagedRoom[]
+  sessions      DSession[]
+  notifications DNotification[]
+  bookings      M1Booking[]
+  createdAt     DateTime        @default(now()) @db.Timestamptz(3)
+  updatedAt     DateTime        @default(now()) @updatedAt @db.Timestamptz(3)
 
   @@index([departmentId])
   @@map("d_users")
 }
 
 model DRole {
+  revision    Int               @default(1)
   id          String            @id @db.VarChar(100)
   name        String            @unique @db.VarChar(200)
   scope       DScope
@@ -97,6 +101,7 @@ model DRolePermission {
 }
 
 model DRoom {
+  revision               Int                @default(1)
   id                     String             @id @db.VarChar(100)
   code                   String             @unique @db.VarChar(200)
   name                   String             @db.VarChar(200)
@@ -109,12 +114,14 @@ model DRoom {
   bookings               M1Booking[]
   resourceEffects        M1ResourceEffect[]
   openingRules           DOpeningRule[]
+  dailyCodes             M1DailyCode[]
 
   @@index([departmentId])
   @@map("d_rooms")
 }
 
 model DSeat {
+  revision  Int         @default(1)
   id        String      @id @db.VarChar(100)
   roomId    String      @db.VarChar(100)
   room      DRoom       @relation(fields: [roomId], references: [id], onDelete: Restrict)
@@ -160,6 +167,7 @@ model DLoginBucket {
 }
 
 model DAuditEvent {
+  reason    String?  @db.VarChar(1000)
   id        String   @id @db.Uuid
   actorId   String   @db.VarChar(100)
   action    String   @db.VarChar(100)
@@ -172,8 +180,13 @@ model DAuditEvent {
 }
 
 model DBookingPolicy {
-  id       String @id @db.VarChar(100)
-  maxHours Int    @default(4)
+  id                    String @id @db.VarChar(100)
+  maxHours              Int    @default(4)
+  revision              Int    @default(1)
+  checkInBeforeMinutes  Int    @default(15)
+  reminderBeforeMinutes Int    @default(15)
+  reminderAfterMinutes  Int    @default(10)
+  noShowAfterMinutes    Int    @default(15)
 
   @@map("d_booking_policy")
 }
@@ -190,20 +203,33 @@ model DOpeningRule {
 }
 
 model M1Booking {
-  id           String    @id @db.Uuid
-  roomId       String    @db.VarChar(100)
-  seatId       String    @db.VarChar(100)
-  userId       String    @db.VarChar(100)
-  room         DRoom     @relation(fields: [roomId], references: [id], onDelete: Restrict)
-  seat         DSeat     @relation(fields: [seatId], references: [id], onDelete: Restrict)
-  user         DUser     @relation(fields: [userId], references: [id], onDelete: Restrict)
-  startsAt     DateTime  @db.Timestamptz(3)
-  endsAt       DateTime  @db.Timestamptz(3)
-  status       String    @db.VarChar(30)
-  cancelReason String?   @db.VarChar(1000)
-  cancelledAt  DateTime? @db.Timestamptz(3)
-  createdAt    DateTime  @default(now()) @db.Timestamptz(3)
+  id                   String    @id @db.Uuid
+  roomId               String    @db.VarChar(100)
+  seatId               String    @db.VarChar(100)
+  userId               String    @db.VarChar(100)
+  room                 DRoom     @relation(fields: [roomId], references: [id], onDelete: Restrict)
+  seat                 DSeat     @relation(fields: [seatId], references: [id], onDelete: Restrict)
+  user                 DUser     @relation(fields: [userId], references: [id], onDelete: Restrict)
+  startsAt             DateTime  @db.Timestamptz(3)
+  endsAt               DateTime  @db.Timestamptz(3)
+  status               String    @db.VarChar(30)
+  enforceNoShow        Boolean   @default(true)
+  policyRevision       Int       @default(1)
+  checkInBeforeMinutes Int       @default(15)
+  noShowAfterMinutes   Int       @default(15)
+  reminderBeforeAt     DateTime? @db.Timestamptz(3)
+  reminderAfterAt      DateTime? @db.Timestamptz(3)
+  nextActionAt         DateTime? @db.Timestamptz(3)
+  checkedInAt          DateTime? @db.Timestamptz(3)
+  completedAt          DateTime? @db.Timestamptz(3)
+  violationAt          DateTime? @db.Timestamptz(3)
+  failedCodeAttempts   Int       @default(0)
+  codeAttemptWindow    DateTime? @db.Timestamptz(3)
+  cancelReason         String?   @db.VarChar(1000)
+  cancelledAt          DateTime? @db.Timestamptz(3)
+  createdAt            DateTime  @default(now()) @db.Timestamptz(3)
 
+  @@index([status, nextActionAt])
   @@index([roomId, startsAt, endsAt])
   @@index([userId, id])
   @@map("m1_bookings")
@@ -230,6 +256,7 @@ model M1ResourceEffect {
   operationId  String    @db.Uuid
   actorId      String    @db.VarChar(100)
   reason       String    @db.VarChar(1000)
+  releasedAt   DateTime? @db.Timestamptz(3)
   updatedAt    DateTime  @default(now()) @updatedAt @db.Timestamptz(3)
 
   @@id([sourceModule, sourceId])
@@ -248,4 +275,39 @@ model M1Command {
 
   @@index([sourceModule, sourceId])
   @@map("m1_commands")
+}
+
+model M1DailyCode {
+  roomId String @db.VarChar(100)
+  room   DRoom  @relation(fields: [roomId], references: [id], onDelete: Restrict)
+  date   String @db.Char(10)
+  code   String @db.Char(8)
+
+  @@id([roomId, date])
+  @@unique([date, code])
+  @@map("m1_daily_codes")
+}
+
+model DNotification {
+  id        String   @id @db.Uuid
+  userId    String   @db.VarChar(100)
+  user      DUser    @relation(fields: [userId], references: [id], onDelete: Restrict)
+  eventKey  String   @db.VarChar(200)
+  title     String   @db.VarChar(200)
+  body      String   @db.VarChar(1000)
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+
+  @@unique([userId, eventKey])
+  @@index([userId, id])
+  @@map("d_notifications")
+}
+
+model DWriteReceipt {
+  id          String   @id @db.VarChar(200)
+  fingerprint String   @db.Char(64)
+  result      Json
+  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+
+  @@map("d_write_receipts")
 }

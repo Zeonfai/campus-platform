@@ -1,3 +1,5 @@
+import { BookingSupportService } from './booking-support.service.js';
+import { BookingPolicyDto } from './booking-support.dto.js';
 import {
   BadRequestException,
   Body,
@@ -7,6 +9,7 @@ import {
   Headers,
   HttpCode,
   Param,
+  ParseUUIDPipe,
   Patch,
   Post,
   Put,
@@ -14,7 +17,16 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { notImplemented } from '../../platform/not-implemented.js';
+import { AdministrationService } from './administration.service.js';
+import {
+  AuditQueryDto,
+  DepartmentWriteDto,
+  RoleWriteDto,
+  RoomWriteDto,
+  SeatWriteDto,
+  UserAccessWriteDto,
+  OpeningRulesWriteDto,
+} from './administration.dto.js';
 
 import { isUUID } from 'class-validator';
 import { ServiceIdentityService } from './service-identity.service.js';
@@ -30,12 +42,18 @@ import { SessionGuard, RequirePermission, type IdentityRequest } from './session
 @UseGuards(SessionGuard)
 export class DController {
   constructor(
+    private readonly administration: AdministrationService,
+    private readonly support: BookingSupportService,
     private readonly identities: IdentityService,
     private readonly directory: DirectoryService,
     private readonly services: ServiceIdentityService,
     private readonly resources: ResourceDirectoryService,
     private readonly db: PrismaService,
   ) {}
+  private key(value: string | undefined): string {
+    if (!value || !isUUID(value)) throw new BadRequestException('Idempotency-Key must be a UUID');
+    return value;
+  }
   @Post('api/v1/auth/login')
   @RequirePermission('public')
   @HttpCode(200)
@@ -164,14 +182,30 @@ export class DController {
 
   @Post('api/v1/departments')
   @RequirePermission('d.departments.write')
-  createDepartment(): never {
-    return notImplemented('createDepartment');
+  createDepartment(
+    @Req() req: IdentityRequest,
+    @Body() input: DepartmentWriteDto,
+    @Headers('idempotency-key') key: string | undefined,
+  ) {
+    return this.administration.createDepartment(req.identity, input, this.key(key), String(req.id));
   }
 
   @Patch('api/v1/departments/:departmentId')
   @RequirePermission('d.departments.write')
-  updateDepartment(): never {
-    return notImplemented('updateDepartment');
+  @HttpCode(200)
+  updateDepartment(
+    @Req() req: IdentityRequest,
+    @Param('departmentId') id: string,
+    @Body() input: DepartmentWriteDto,
+    @Headers('idempotency-key') key: string | undefined,
+  ) {
+    return this.administration.updateDepartment(
+      req.identity,
+      id,
+      input,
+      this.key(key),
+      String(req.id),
+    );
   }
 
   @Get('api/v1/roles')
@@ -182,14 +216,24 @@ export class DController {
 
   @Post('api/v1/roles')
   @RequirePermission('d.roles.write')
-  createRole(): never {
-    return notImplemented('createRole');
+  createRole(
+    @Req() req: IdentityRequest,
+    @Body() input: RoleWriteDto,
+    @Headers('idempotency-key') key: string | undefined,
+  ) {
+    return this.administration.createRole(req.identity, input, this.key(key), String(req.id));
   }
 
   @Patch('api/v1/roles/:roleId')
   @RequirePermission('d.roles.write')
-  updateRole(): never {
-    return notImplemented('updateRole');
+  @HttpCode(200)
+  updateRole(
+    @Req() req: IdentityRequest,
+    @Param('roleId') id: string,
+    @Body() input: RoleWriteDto,
+    @Headers('idempotency-key') key: string | undefined,
+  ) {
+    return this.administration.updateRole(req.identity, id, input, this.key(key), String(req.id));
   }
 
   @Get('api/v1/rooms')
@@ -200,14 +244,24 @@ export class DController {
 
   @Post('api/v1/rooms')
   @RequirePermission('d.rooms.write')
-  createRoom(): never {
-    return notImplemented('createRoom');
+  createRoom(
+    @Req() req: IdentityRequest,
+    @Body() input: RoomWriteDto,
+    @Headers('idempotency-key') key: string | undefined,
+  ) {
+    return this.administration.createRoom(req.identity, input, this.key(key), String(req.id));
   }
 
   @Patch('api/v1/rooms/:roomId')
   @RequirePermission('d.rooms.write')
-  updateRoom(): never {
-    return notImplemented('updateRoom');
+  @HttpCode(200)
+  updateRoom(
+    @Req() req: IdentityRequest,
+    @Param('roomId') id: string,
+    @Body() input: RoomWriteDto,
+    @Headers('idempotency-key') key: string | undefined,
+  ) {
+    return this.administration.updateRoom(req.identity, id, input, this.key(key), String(req.id));
   }
 
   @Get('api/v1/permissions')
@@ -218,14 +272,26 @@ export class DController {
 
   @Get('api/v1/users')
   @RequirePermission('d.users.read')
-  listUsers(): never {
-    return notImplemented('listUsers');
+  listUsers(@Req() req: IdentityRequest, @Query() query: PageDto) {
+    return this.administration.users(req.identity, query);
   }
 
   @Put('api/v1/users/:userId/access')
   @RequirePermission('d.users.write')
-  updateUserAccess(): never {
-    return notImplemented('updateUserAccess');
+  @HttpCode(200)
+  updateUserAccess(
+    @Req() req: IdentityRequest,
+    @Param('userId') id: string,
+    @Body() input: UserAccessWriteDto,
+    @Headers('idempotency-key') key: string | undefined,
+  ) {
+    return this.administration.updateUserAccess(
+      req.identity,
+      id,
+      input,
+      this.key(key),
+      String(req.id),
+    );
   }
 
   @Get('api/v1/rooms/:roomId/seats')
@@ -240,49 +306,95 @@ export class DController {
 
   @Post('api/v1/rooms/:roomId/seats')
   @RequirePermission('d.rooms.write')
-  createSeat(): never {
-    return notImplemented('createSeat');
+  createSeat(
+    @Req() req: IdentityRequest,
+    @Param('roomId') roomId: string,
+    @Body() input: SeatWriteDto,
+    @Headers('idempotency-key') key: string | undefined,
+  ) {
+    return this.administration.createSeat(
+      req.identity,
+      roomId,
+      input,
+      this.key(key),
+      String(req.id),
+    );
   }
 
   @Patch('api/v1/seats/:seatId')
   @RequirePermission('d.rooms.write')
-  updateSeat(): never {
-    return notImplemented('updateSeat');
+  @HttpCode(200)
+  updateSeat(
+    @Req() req: IdentityRequest,
+    @Param('seatId') id: string,
+    @Body() input: SeatWriteDto,
+    @Headers('idempotency-key') key: string | undefined,
+  ) {
+    return this.administration.updateSeat(req.identity, id, input, this.key(key), String(req.id));
   }
 
   @Put('api/v1/rooms/:roomId/opening-rules')
   @RequirePermission('d.rooms.write')
-  setOpeningRules(): never {
-    return notImplemented('setOpeningRules');
+  @HttpCode(200)
+  setOpeningRules(
+    @Req() req: IdentityRequest,
+    @Param('roomId') roomId: string,
+    @Body() input: OpeningRulesWriteDto,
+    @Headers('idempotency-key') key: string | undefined,
+  ) {
+    return this.administration.setOpeningRules(
+      req.identity,
+      roomId,
+      input,
+      this.key(key),
+      String(req.id),
+    );
+  }
+
+  @Get('api/v1/rooms/:roomId/opening-rules')
+  @RequirePermission('d.rooms.read')
+  getOpeningRules(@Req() req: IdentityRequest, @Param('roomId') roomId: string) {
+    return this.administration.openingRules(req.identity, roomId);
   }
 
   @Get('api/v1/settings/booking-policy')
   @RequirePermission('authenticated')
-  getBookingPolicy(): never {
-    return notImplemented('getBookingPolicy');
+  getBookingPolicy() {
+    return this.support.policy();
   }
 
   @Put('api/v1/settings/booking-policy')
   @RequirePermission('d.settings.write')
-  setBookingPolicy(): never {
-    return notImplemented('setBookingPolicy');
+  setBookingPolicy(
+    @Req() req: IdentityRequest,
+    @Body() input: BookingPolicyDto,
+    @Headers('idempotency-key') key: string | undefined,
+  ) {
+    if (!key || !isUUID(key)) throw new BadRequestException('Idempotency-Key must be a UUID');
+    return this.support.setPolicy(req.identity, input, key, String(req.id));
   }
 
   @Get('api/v1/notifications')
   @RequirePermission('authenticated')
-  listNotifications(): never {
-    return notImplemented('listNotifications');
+  listNotifications(@Req() req: IdentityRequest, @Query() query: PageDto) {
+    return this.support.notifications(req.identity, query);
   }
 
   @Post('api/v1/notifications/:notificationId/read')
   @RequirePermission('authenticated')
-  markNotificationRead(): never {
-    return notImplemented('markNotificationRead');
+  @HttpCode(204)
+  async markNotificationRead(
+    @Req() req: IdentityRequest,
+    @Param('notificationId', new ParseUUIDPipe()) id: string,
+    @Headers('idempotency-key') key: string | undefined,
+  ) {
+    if (!key || !isUUID(key)) throw new BadRequestException('Idempotency-Key must be a UUID');
+    await this.support.read(req.identity, id, key);
   }
 
   @Get('api/v1/audit-events')
   @RequirePermission('d.audit.read')
-  listAuditEvents(): never {
-    return notImplemented('listAuditEvents');
+  listAuditEvents(@Req() req: IdentityRequest, @Query() query: AuditQueryDto) {
+    return this.administration.auditEvents(req.identity, query);
   }
 }

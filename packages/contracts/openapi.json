@@ -533,10 +533,10 @@
       "post": {
         "operationId": "createDepartment",
         "summary": "创建Department",
-        "description": "",
+        "description": "TASK-010 initial management rules: UUID write keys, expectedRevision on updates, exact management scopes.",
         "tags": ["D"],
         "x-service": "resource-core",
-        "x-implementation": "scaffold",
+        "x-implementation": "implemented",
         "x-permission": "d.departments.write",
         "parameters": [
           {
@@ -557,7 +557,7 @@
         ],
         "responses": {
           "201": {
-            "description": "Target behavior; not implemented in this scaffold",
+            "description": "Implemented management operation; see TASK-010 initial rules.",
             "content": {
               "application/json": {
                 "schema": {
@@ -638,16 +638,6 @@
           },
           "500": {
             "description": "Request rejected",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
-          "501": {
-            "description": "NOT_IMPLEMENTED: current scaffold response",
             "content": {
               "application/json": {
                 "schema": {
@@ -683,10 +673,10 @@
       "patch": {
         "operationId": "updateDepartment",
         "summary": "修改或停用Department",
-        "description": "",
+        "description": "TASK-010 initial management rules: UUID write keys, expectedRevision on updates, exact management scopes.",
         "tags": ["D"],
         "x-service": "resource-core",
-        "x-implementation": "scaffold",
+        "x-implementation": "implemented",
         "x-permission": "d.departments.write",
         "parameters": [
           {
@@ -717,7 +707,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Target behavior; not implemented in this scaffold",
+            "description": "Implemented management operation; see TASK-010 initial rules.",
             "content": {
               "application/json": {
                 "schema": {
@@ -798,16 +788,6 @@
           },
           "500": {
             "description": "Request rejected",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
-          "501": {
-            "description": "NOT_IMPLEMENTED: current scaffold response",
             "content": {
               "application/json": {
                 "schema": {
@@ -980,10 +960,10 @@
       "post": {
         "operationId": "createRole",
         "summary": "创建Role",
-        "description": "",
+        "description": "TASK-010 initial management rules: UUID write keys, expectedRevision on updates, exact management scopes.",
         "tags": ["D"],
         "x-service": "resource-core",
-        "x-implementation": "scaffold",
+        "x-implementation": "implemented",
         "x-permission": "d.roles.write",
         "parameters": [
           {
@@ -1004,7 +984,7 @@
         ],
         "responses": {
           "201": {
-            "description": "Target behavior; not implemented in this scaffold",
+            "description": "Implemented management operation; see TASK-010 initial rules.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1085,16 +1065,6 @@
           },
           "500": {
             "description": "Request rejected",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
-          "501": {
-            "description": "NOT_IMPLEMENTED: current scaffold response",
             "content": {
               "application/json": {
                 "schema": {
@@ -1130,10 +1100,10 @@
       "patch": {
         "operationId": "updateRole",
         "summary": "修改或停用Role",
-        "description": "",
+        "description": "TASK-010 initial management rules: UUID write keys, expectedRevision on updates, exact management scopes.",
         "tags": ["D"],
         "x-service": "resource-core",
-        "x-implementation": "scaffold",
+        "x-implementation": "implemented",
         "x-permission": "d.roles.write",
         "parameters": [
           {
@@ -1164,7 +1134,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Target behavior; not implemented in this scaffold",
+            "description": "Implemented management operation; see TASK-010 initial rules.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1245,16 +1215,6 @@
           },
           "500": {
             "description": "Request rejected",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
-          "501": {
-            "description": "NOT_IMPLEMENTED: current scaffold response",
             "content": {
               "application/json": {
                 "schema": {
@@ -1427,10 +1387,10 @@
       "post": {
         "operationId": "createRoom",
         "summary": "创建Room",
-        "description": "",
+        "description": "TASK-010 initial management rules: UUID write keys, expectedRevision on updates, exact management scopes.",
         "tags": ["D"],
         "x-service": "resource-core",
-        "x-implementation": "scaffold",
+        "x-implementation": "implemented",
         "x-permission": "d.rooms.write",
         "parameters": [
           {
@@ -1451,7 +1411,7 @@
         ],
         "responses": {
           "201": {
-            "description": "Target behavior; not implemented in this scaffold",
+            "description": "Implemented management operation; see TASK-010 initial rules.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1532,16 +1492,6 @@
           },
           "500": {
             "description": "Request rejected",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
-          "501": {
-            "description": "NOT_IMPLEMENTED: current scaffold response",
             "content": {
               "application/json": {
                 "schema": {
@@ -1577,10 +1527,10 @@
       "patch": {
         "operationId": "updateRoom",
         "summary": "修改或停用Room",
-        "description": "",
+        "description": "TASK-010 initial management rules: UUID write keys, expectedRevision on updates, exact management scopes.",
         "tags": ["D"],
         "x-service": "resource-core",
-        "x-implementation": "scaffold",
+        "x-implementation": "implemented",
         "x-permission": "d.rooms.write",
         "parameters": [
           {
@@ -1611,7 +1561,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Target behavior; not implemented in this scaffold",
+            "description": "Implemented management operation; see TASK-010 initial rules.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1692,16 +1642,6 @@
           },
           "500": {
             "description": "Request rejected",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
-          "501": {
-            "description": "NOT_IMPLEMENTED: current scaffold response",
             "content": {
               "application/json": {
                 "schema": {
@@ -1876,10 +1816,10 @@
       "get": {
         "operationId": "listUsers",
         "summary": "按数据范围查询用户",
-        "description": "",
+        "description": "TASK-010 initial management rules: UUID write keys, expectedRevision on updates, exact management scopes.",
         "tags": ["D"],
         "x-service": "resource-core",
-        "x-implementation": "scaffold",
+        "x-implementation": "implemented",
         "x-permission": "d.users.read",
         "parameters": [
           {
@@ -1909,7 +1849,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Target behavior; not implemented in this scaffold",
+            "description": "Implemented management operation; see TASK-010 initial rules.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1998,16 +1938,6 @@
               }
             }
           },
-          "501": {
-            "description": "NOT_IMPLEMENTED: current scaffold response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Dependency unavailable or result unknown",
             "content": {
@@ -2025,10 +1955,10 @@
       "put": {
         "operationId": "updateUserAccess",
         "summary": "更新角色、管理范围及禁用状态",
-        "description": "",
+        "description": "TASK-010 initial management rules: UUID write keys, expectedRevision on updates, exact management scopes.",
         "tags": ["D"],
         "x-service": "resource-core",
-        "x-implementation": "scaffold",
+        "x-implementation": "implemented",
         "x-permission": "d.users.write",
         "parameters": [
           {
@@ -2059,7 +1989,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Target behavior; not implemented in this scaffold",
+            "description": "Implemented management operation; see TASK-010 initial rules.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2140,16 +2070,6 @@
           },
           "500": {
             "description": "Request rejected",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
-          "501": {
-            "description": "NOT_IMPLEMENTED: current scaffold response",
             "content": {
               "application/json": {
                 "schema": {
@@ -2332,10 +2252,10 @@
       "post": {
         "operationId": "createSeat",
         "summary": "登记唯一编号座位",
-        "description": "",
+        "description": "TASK-010 initial management rules: UUID write keys, expectedRevision on updates, exact management scopes.",
         "tags": ["D"],
         "x-service": "resource-core",
-        "x-implementation": "scaffold",
+        "x-implementation": "implemented",
         "x-permission": "d.rooms.write",
         "parameters": [
           {
@@ -2366,7 +2286,7 @@
         ],
         "responses": {
           "201": {
-            "description": "Target behavior; not implemented in this scaffold",
+            "description": "Implemented management operation; see TASK-010 initial rules.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2447,16 +2367,6 @@
           },
           "500": {
             "description": "Request rejected",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
-          "501": {
-            "description": "NOT_IMPLEMENTED: current scaffold response",
             "content": {
               "application/json": {
                 "schema": {
@@ -2492,10 +2402,10 @@
       "patch": {
         "operationId": "updateSeat",
         "summary": "修改或停用座位并协调已有预约",
-        "description": "",
+        "description": "TASK-010 initial management rules: UUID write keys, expectedRevision on updates, exact management scopes.",
         "tags": ["D"],
         "x-service": "resource-core",
-        "x-implementation": "scaffold",
+        "x-implementation": "implemented",
         "x-permission": "d.rooms.write",
         "parameters": [
           {
@@ -2526,7 +2436,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Target behavior; not implemented in this scaffold",
+            "description": "Implemented management operation; see TASK-010 initial rules.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2615,16 +2525,6 @@
               }
             }
           },
-          "501": {
-            "description": "NOT_IMPLEMENTED: current scaffold response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Dependency unavailable or result unknown",
             "content": {
@@ -2652,10 +2552,10 @@
       "put": {
         "operationId": "setOpeningRules",
         "summary": "设置开放规则并协调已有预约",
-        "description": "",
+        "description": "TASK-010 initial management rules: UUID write keys, expectedRevision on updates, exact management scopes.",
         "tags": ["D"],
         "x-service": "resource-core",
-        "x-implementation": "scaffold",
+        "x-implementation": "implemented",
         "x-permission": "d.rooms.write",
         "parameters": [
           {
@@ -2685,9 +2585,6 @@
           }
         ],
         "responses": {
-          "204": {
-            "description": "Target behavior; not implemented in this scaffold"
-          },
           "400": {
             "description": "Request rejected",
             "content": {
@@ -2768,8 +2665,136 @@
               }
             }
           },
-          "501": {
-            "description": "NOT_IMPLEMENTED: current scaffold response",
+          "503": {
+            "description": "Dependency unavailable or result unknown",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Implemented management operation; see TASK-010 initial rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpeningSchedule"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpeningRuleInput"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "getOpeningRules",
+        "summary": "读取当前教室的整周开放规则",
+        "description": "TASK-010 initial management rules: UUID write keys, expectedRevision on updates, exact management scopes.",
+        "tags": ["D"],
+        "x-service": "resource-core",
+        "x-implementation": "implemented",
+        "x-permission": "d.rooms.read",
+        "parameters": [
+          {
+            "name": "roomId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            }
+          }
+        ],
+        "security": [
+          {
+            "userBearer": []
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Request rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Request rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Request rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Request rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Resource conflict, stale revision or idempotency payload mismatch",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Request rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Request rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Request rejected",
             "content": {
               "application/json": {
                 "schema": {
@@ -2787,14 +2812,14 @@
                 }
               }
             }
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/OpeningRuleInput"
+          },
+          "200": {
+            "description": "Implemented management operation; see TASK-010 initial rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpeningSchedule"
+                }
               }
             }
           }
@@ -2808,7 +2833,7 @@
         "description": "",
         "tags": ["D"],
         "x-service": "resource-core",
-        "x-implementation": "scaffold",
+        "x-implementation": "implemented",
         "x-permission": "authenticated",
         "parameters": [],
         "security": [
@@ -2818,7 +2843,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Target behavior; not implemented in this scaffold",
+            "description": "Implemented response; see TASK-009 initial rules.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2899,16 +2924,6 @@
           },
           "500": {
             "description": "Request rejected",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
-          "501": {
-            "description": "NOT_IMPLEMENTED: current scaffold response",
             "content": {
               "application/json": {
                 "schema": {
@@ -2935,7 +2950,7 @@
         "description": "",
         "tags": ["D"],
         "x-service": "resource-core",
-        "x-implementation": "scaffold",
+        "x-implementation": "implemented",
         "x-permission": "d.settings.write",
         "parameters": [
           {
@@ -2956,7 +2971,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Target behavior; not implemented in this scaffold",
+            "description": "Implemented response; see TASK-009 initial rules.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3037,16 +3052,6 @@
           },
           "500": {
             "description": "Request rejected",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
-          "501": {
-            "description": "NOT_IMPLEMENTED: current scaffold response",
             "content": {
               "application/json": {
                 "schema": {
@@ -3085,7 +3090,7 @@
         "description": "",
         "tags": ["D"],
         "x-service": "resource-core",
-        "x-implementation": "scaffold",
+        "x-implementation": "implemented",
         "x-permission": "authenticated",
         "parameters": [
           {
@@ -3115,7 +3120,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Target behavior; not implemented in this scaffold",
+            "description": "Implemented response; see TASK-009 initial rules.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3204,16 +3209,6 @@
               }
             }
           },
-          "501": {
-            "description": "NOT_IMPLEMENTED: current scaffold response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Dependency unavailable or result unknown",
             "content": {
@@ -3234,7 +3229,7 @@
         "description": "",
         "tags": ["D"],
         "x-service": "resource-core",
-        "x-implementation": "scaffold",
+        "x-implementation": "implemented",
         "x-permission": "authenticated",
         "parameters": [
           {
@@ -3265,7 +3260,7 @@
         ],
         "responses": {
           "204": {
-            "description": "Target behavior; not implemented in this scaffold"
+            "description": "Implemented response; see TASK-009 initial rules."
           },
           "400": {
             "description": "Request rejected",
@@ -3347,16 +3342,6 @@
               }
             }
           },
-          "501": {
-            "description": "NOT_IMPLEMENTED: current scaffold response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Dependency unavailable or result unknown",
             "content": {
@@ -3374,10 +3359,10 @@
       "get": {
         "operationId": "listAuditEvents",
         "summary": "授权审计查询",
-        "description": "",
+        "description": "TASK-010 initial management rules: UUID write keys, expectedRevision on updates, exact management scopes.",
         "tags": ["D"],
         "x-service": "resource-core",
-        "x-implementation": "scaffold",
+        "x-implementation": "implemented",
         "x-permission": "d.audit.read",
         "parameters": [
           {
@@ -3398,6 +3383,33 @@
               "minLength": 1,
               "maxLength": 200
             }
+          },
+          {
+            "name": "actorId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            }
+          },
+          {
+            "name": "action",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            }
+          },
+          {
+            "name": "targetId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            }
           }
         ],
         "security": [
@@ -3407,7 +3419,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Target behavior; not implemented in this scaffold",
+            "description": "Implemented management operation; see TASK-010 initial rules.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3488,16 +3500,6 @@
           },
           "500": {
             "description": "Request rejected",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
-          "501": {
-            "description": "NOT_IMPLEMENTED: current scaffold response",
             "content": {
               "application/json": {
                 "schema": {
@@ -4259,7 +4261,7 @@
         "description": "",
         "tags": ["M1"],
         "x-service": "resource-core",
-        "x-implementation": "scaffold",
+        "x-implementation": "implemented",
         "x-permission": "authenticated",
         "parameters": [
           {
@@ -4290,7 +4292,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Target behavior; not implemented in this scaffold",
+            "description": "Implemented response; see TASK-009 initial rules.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4371,16 +4373,6 @@
           },
           "500": {
             "description": "Request rejected",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
-          "501": {
-            "description": "NOT_IMPLEMENTED: current scaffold response",
             "content": {
               "application/json": {
                 "schema": {
@@ -4419,8 +4411,8 @@
         "description": "",
         "tags": ["M1"],
         "x-service": "resource-core",
-        "x-implementation": "scaffold",
-        "x-permission": "authenticated",
+        "x-implementation": "implemented",
+        "x-permission": "m1.bookings.create",
         "parameters": [
           {
             "name": "bookingId",
@@ -4450,7 +4442,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Target behavior; not implemented in this scaffold",
+            "description": "Implemented response; see TASK-009 initial rules.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4539,16 +4531,6 @@
               }
             }
           },
-          "501": {
-            "description": "NOT_IMPLEMENTED: current scaffold response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Dependency unavailable or result unknown",
             "content": {
@@ -4565,7 +4547,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/BookingInput"
+                "$ref": "#/components/schemas/RepeatBookingInput"
               }
             }
           }
@@ -4579,7 +4561,7 @@
         "description": "",
         "tags": ["M1"],
         "x-service": "resource-core",
-        "x-implementation": "scaffold",
+        "x-implementation": "implemented",
         "x-permission": "m1.checkin-code.display",
         "parameters": [
           {
@@ -4600,7 +4582,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Target behavior; not implemented in this scaffold",
+            "description": "Implemented response; see TASK-009 initial rules.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4689,16 +4671,6 @@
               }
             }
           },
-          "501": {
-            "description": "NOT_IMPLEMENTED: current scaffold response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Dependency unavailable or result unknown",
             "content": {
@@ -4719,7 +4691,7 @@
         "description": "",
         "tags": ["M1"],
         "x-service": "resource-core",
-        "x-implementation": "scaffold",
+        "x-implementation": "implemented",
         "x-permission": "m1.resource-reasons.read",
         "parameters": [
           {
@@ -4750,6 +4722,24 @@
               "minLength": 1,
               "maxLength": 200
             }
+          },
+          {
+            "name": "startsAt",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "endsAt",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
           }
         ],
         "security": [
@@ -4759,7 +4749,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Target behavior; not implemented in this scaffold",
+            "description": "Implemented response; see TASK-009 initial rules.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4848,16 +4838,6 @@
               }
             }
           },
-          "501": {
-            "description": "NOT_IMPLEMENTED: current scaffold response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
           "503": {
             "description": "Dependency unavailable or result unknown",
             "content": {
@@ -4878,7 +4858,7 @@
         "description": "",
         "tags": ["M1"],
         "x-service": "resource-core",
-        "x-implementation": "scaffold",
+        "x-implementation": "implemented",
         "x-permission": "m1.statistics.read",
         "parameters": [
           {
@@ -4899,6 +4879,32 @@
               "minLength": 1,
               "maxLength": 200
             }
+          },
+          {
+            "name": "startsAt",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "endsAt",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "roomId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            }
           }
         ],
         "security": [
@@ -4908,7 +4914,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Target behavior; not implemented in this scaffold",
+            "description": "Implemented response; see TASK-009 initial rules.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4989,16 +4995,6 @@
           },
           "500": {
             "description": "Request rejected",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
-          "501": {
-            "description": "NOT_IMPLEMENTED: current scaffold response",
             "content": {
               "application/json": {
                 "schema": {
@@ -9317,6 +9313,29 @@
           },
           "enabled": {
             "type": "boolean"
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647,
+            "description": "Management reads and writes include revision; legacy public projections may omit it."
+          },
+          "username": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "roleIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "managedRoomIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         },
         "required": ["id", "displayName", "permissions", "enabled"]
@@ -9334,6 +9353,12 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 200
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647,
+            "description": "Management reads and writes include revision; legacy public projections may omit it."
           }
         },
         "required": ["id", "name"]
@@ -9346,6 +9371,12 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 200
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483646,
+            "description": "Required >=1 on update; omit or use 0 on create."
           }
         },
         "required": ["name"]
@@ -9375,6 +9406,12 @@
           "scope": {
             "type": "string",
             "enum": ["SELF", "DEPARTMENT", "MANAGED_ROOMS", "ALL"]
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647,
+            "description": "Management reads and writes include revision; legacy public projections may omit it."
           }
         },
         "required": ["id", "name", "permissionIds", "scope"]
@@ -9394,11 +9431,19 @@
               "type": "string",
               "minLength": 1,
               "maxLength": 100
-            }
+            },
+            "uniqueItems": true,
+            "maxItems": 100
           },
           "scope": {
             "type": "string",
             "enum": ["SELF", "DEPARTMENT", "MANAGED_ROOMS", "ALL"]
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483646,
+            "description": "Required >=1 on update; omit or use 0 on create."
           }
         },
         "required": ["name", "permissionIds", "scope"]
@@ -9430,7 +9475,9 @@
               "type": "string",
               "minLength": 1,
               "maxLength": 100
-            }
+            },
+            "uniqueItems": true,
+            "maxItems": 100
           },
           "managedRoomIds": {
             "type": "array",
@@ -9438,7 +9485,9 @@
               "type": "string",
               "minLength": 1,
               "maxLength": 100
-            }
+            },
+            "uniqueItems": true,
+            "maxItems": 100
           },
           "enabled": {
             "type": "boolean"
@@ -9447,9 +9496,15 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 1000
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483646,
+            "description": "Required >=1 on update; omit or use 0 on create."
           }
         },
-        "required": ["roleIds", "managedRoomIds", "enabled", "reason"]
+        "required": ["roleIds", "managedRoomIds", "enabled", "reason", "expectedRevision"]
       },
       "Room": {
         "type": "object",
@@ -9480,6 +9535,12 @@
           },
           "restrictedToDepartment": {
             "type": "boolean"
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647,
+            "description": "Management reads and writes include revision; legacy public projections may omit it."
           }
         },
         "required": ["id", "code", "name", "enabled", "restrictedToDepartment"]
@@ -9499,7 +9560,7 @@
             "maxLength": 200
           },
           "departmentId": {
-            "type": "string",
+            "type": ["string", "null"],
             "minLength": 1,
             "maxLength": 100
           },
@@ -9508,6 +9569,12 @@
           },
           "enabled": {
             "type": "boolean"
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483646,
+            "description": "Required >=1 on update; omit or use 0 on create."
           }
         },
         "required": ["code", "name", "restrictedToDepartment", "enabled"]
@@ -9537,6 +9604,12 @@
           "powerType": {
             "type": "string",
             "enum": ["NONE", "FIXED", "RAIL"]
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647,
+            "description": "Management reads and writes include revision; legacy public projections may omit it."
           }
         },
         "required": ["id", "roomId", "code", "enabled", "powerType"]
@@ -9556,6 +9629,12 @@
           "powerType": {
             "type": "string",
             "enum": ["NONE", "FIXED", "RAIL"]
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483646,
+            "description": "Required >=1 on update; omit or use 0 on create."
           }
         },
         "required": ["code", "enabled", "powerType"]
@@ -9566,28 +9645,35 @@
         "properties": {
           "weekdays": {
             "type": "array",
-            "minItems": 1,
+            "minItems": 0,
             "uniqueItems": true,
             "items": {
               "type": "integer",
               "minimum": 1,
               "maximum": 7
-            }
+            },
+            "maxItems": 7
           },
           "opensAt": {
             "type": "string",
-            "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"
+            "pattern": "^([01][0-9]|2[0-3]):00$"
           },
           "closesAt": {
             "type": "string",
-            "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"
+            "pattern": "^(([01][0-9]|2[0-3]):00|24:00)$"
           },
           "timezone": {
             "type": "string",
             "enum": ["Asia/Shanghai"]
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483646,
+            "description": "Required >=1 on update; omit or use 0 on create."
           }
         },
-        "required": ["weekdays", "opensAt", "closesAt", "timezone"]
+        "required": ["weekdays", "opensAt", "closesAt", "timezone", "expectedRevision"]
       },
       "BookingPolicy": {
         "type": "object",
@@ -9601,10 +9687,37 @@
           "revision": {
             "type": "integer",
             "minimum": 1,
-            "maximum": 9007199254740991
+            "maximum": 2147483647
+          },
+          "checkInBeforeMinutes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 60
+          },
+          "reminderBeforeMinutes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 60
+          },
+          "reminderAfterMinutes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 59
+          },
+          "noShowAfterMinutes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 60
           }
         },
-        "required": ["maxHours", "revision"]
+        "required": [
+          "maxHours",
+          "revision",
+          "checkInBeforeMinutes",
+          "reminderBeforeMinutes",
+          "reminderAfterMinutes",
+          "noShowAfterMinutes"
+        ]
       },
       "BookingInput": {
         "type": "object",
@@ -9670,6 +9783,29 @@
           "maintenanceAffected": {
             "type": "boolean",
             "description": "Current active maintenance affects this booking interval; reservation status remains unchanged. Present on owner detail/list responses."
+          },
+          "checkInOpensAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "checkInClosesAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "checkedInAt": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          },
+          "violationAt": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          },
+          "cancelReason": {
+            "type": ["string", "null"]
+          },
+          "policyRevision": {
+            "type": "integer",
+            "minimum": 1
           }
         },
         "required": ["id", "seatId", "roomId", "userId", "startsAt", "endsAt", "status"]
@@ -9692,8 +9828,8 @@
         "properties": {
           "code": {
             "type": "string",
-            "minLength": 1,
-            "maxLength": 32,
+            "minLength": 8,
+            "maxLength": 8,
             "writeOnly": true
           }
         },
@@ -9749,7 +9885,21 @@
           "reason": {
             "type": "string",
             "minLength": 1,
-            "maxLength": 200
+            "maxLength": 1000
+          },
+          "state": {
+            "type": "string"
+          },
+          "startsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endsAt": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          },
+          "seatId": {
+            "type": "string"
           }
         },
         "required": ["sourceModule", "sourceId", "reason"]
@@ -10293,6 +10443,21 @@
           },
           "checkedInHours": {
             "type": "number",
+            "minimum": 0
+          },
+          "roomName": {
+            "type": "string"
+          },
+          "bookingCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "noShowCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "cancelledCount": {
+            "type": "integer",
             "minimum": 0
           }
         },
@@ -10873,6 +11038,66 @@
           }
         },
         "required": ["room", "escalationRecipientIds"]
+      },
+      "RepeatBookingInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "startsAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "RFC3339 with timezone; booking intervals use [start,end)."
+          },
+          "endsAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "RFC3339 with timezone; booking intervals use [start,end)."
+          }
+        },
+        "required": ["startsAt", "endsAt"]
+      },
+      "OpeningSchedule": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "roomId": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "timezone": {
+            "type": "string",
+            "enum": ["Asia/Shanghai"]
+          },
+          "rules": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "weekday": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 7
+                },
+                "opensHour": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 23
+                },
+                "closesHour": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 24
+                }
+              },
+              "required": ["weekday", "opensHour", "closesHour"]
+            }
+          }
+        },
+        "required": ["roomId", "revision", "timezone", "rules"]
       }
     },
     "securitySchemes": {

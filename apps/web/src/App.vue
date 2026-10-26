@@ -1,12 +1,23 @@
 <script setup lang="ts">
 import { modules } from './modules/catalog';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useSession } from './modules/d/session';
 const session = useSession();
 const router = useRouter();
 const logoutError = ref('');
 const leaving = ref(false);
+const canManage = computed(() =>
+  [
+    'd.departments.write',
+    'd.roles.read',
+    'd.roles.write',
+    'd.rooms.write',
+    'd.users.read',
+    'd.users.write',
+    'd.audit.read',
+  ].some((permission) => session.user?.permissions.includes(permission)),
+);
 async function logout(): Promise<void> {
   leaving.value = true;
   logoutError.value = '';
@@ -27,12 +38,15 @@ async function logout(): Promise<void> {
       <RouterLink class="brand" to="/">校园资源<span>服务平台 · 工程预览</span></RouterLink>
       <nav aria-label="主导航">
         <RouterLink to="/">工作区概览</RouterLink>
+        <RouterLink v-if="session.loggedIn" to="/notifications">我的通知</RouterLink>
+        <RouterLink v-if="session.loggedIn" to="/booking-operations">预约管理与规则</RouterLink>
         <RouterLink v-if="session.loggedIn" to="/bookings">预约自习座位</RouterLink>
         <RouterLink v-if="session.loggedIn" to="/work-orders">物业报修与维修</RouterLink>
         <RouterLink v-if="session.loggedIn" to="/applications">整教室申请与审批</RouterLink>
         <RouterLink :to="session.loggedIn ? '/directory' : '/login'">{{
           session.loggedIn ? '教室与座位' : '登录平台'
         }}</RouterLink>
+        <RouterLink v-if="session.loggedIn && canManage" to="/admin">公共管理</RouterLink>
         <RouterLink v-for="(item, key) in modules" :key="key" :to="`/modules/${key}`">{{
           item.name
         }}</RouterLink>
@@ -44,7 +58,7 @@ async function logout(): Promise<void> {
         </button>
         <p v-if="logoutError" role="alert">{{ logoutError }}</p>
       </div>
-      <p class="sidebar-note">身份、预约、审批和维修已接入<br />签到与管理功能继续完善</p>
+      <p class="sidebar-note">身份、预约、审批和维修已接入<br />签到与站内通知已接入</p>
     </aside>
     <main class="content"><RouterView /></main>
   </div>

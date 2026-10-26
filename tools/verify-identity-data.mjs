@@ -35,7 +35,7 @@ try {
       ownedSchema,
     ])
   ).rows[0].count;
-  assert.equal(tableCount, 19);
+  assert.equal(tableCount, 22);
   console.log(
     `PASS: ${migrations.length} versioned SQL migrations replayed in a newly created empty schema (${tableCount} tables).`,
   );
@@ -58,6 +58,9 @@ try {
     'm1_write_receipts',
     'm1_resource_effects',
     'm1_commands',
+    'm1_daily_codes',
+    'd_notifications',
+    'd_write_receipts',
   ];
   const snapshot = async () => {
     const result = {};

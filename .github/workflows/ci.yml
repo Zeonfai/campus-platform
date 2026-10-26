@@ -1,0 +1,109 @@
+name: Project checks
+
+on:
+  pull_request:
+    branches:
+      - main
+      - 'feat/**'
+  push:
+    branches:
+      - main
+      - 'feat/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Build and real database tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      CI_COMPOSE_PROJECT: campus-ci-${{ github.run_id }}-${{ github.run_attempt }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up pinned Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24.22.0'
+          package-manager-cache: false
+
+      - name: Install pinned pnpm on this runner
+        run: |
+          npm install --global pnpm@10.33.4 --ignore-scripts
+          test "$(pnpm --version)" = '10.33.4'
+
+      # PR code receives no dependency cache. Only push jobs restore/save the
+      # content-addressed pnpm store; node_modules and private files are excluded.
+      - name: Cache pinned dependencies for push jobs
+        if: github.event_name == 'push'
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24.22.0'
+          package-manager-cache: false
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install locked project dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Generate this runner's private configuration
+        run: |
+          node tools/init-local-env.mjs
+          node --input-type=module <<'NODE'
+          import { readFileSync } from 'node:fs';
+          for (const path of ['infra/local/.env', 'apps/resource-core/.env', 'apps/workflow/.env', 'apps/web/.env']) {
+            for (const line of readFileSync(path, 'utf8').split(/\r?\n/)) {
+              const separator = line.indexOf('=');
+              if (separator < 0) continue;
+              const key = line.slice(0, separator);
+              const value = line.slice(separator + 1);
+              if (value && /PASSWORD|TOKEN/.test(key)) console.log('::add-mask::' + value);
+              if (key === 'DATABASE_URL' && value) {
+                console.log('::add-mask::' + value);
+                console.log('::add-mask::' + decodeURIComponent(new URL(value).password));
+              }
+            }
+          }
+          NODE
+
+      - name: Generate database clients
+        run: pnpm db:generate
+
+      - name: Start isolated PostgreSQL
+        run: |
+          docker compose --project-name "$CI_COMPOSE_PROJECT" --env-file infra/local/.env -f infra/local/compose.yaml config --quiet
+          docker compose --project-name "$CI_COMPOSE_PROJECT" --env-file infra/local/.env -f infra/local/compose.yaml up -d --wait
+
+      - name: Apply migrations and local synthetic seeds
+        run: |
+          pnpm db:migrate
+          pnpm db:seed
+          pnpm db:seed:demo
+          node --input-type=module <<'NODE'
+          import { readFileSync } from 'node:fs';
+          const { accounts } = JSON.parse(readFileSync('.local/demo-accounts.json', 'utf8'));
+          for (const account of accounts) console.log('::add-mask::' + account.password);
+          NODE
+
+      - name: Run build and every real database suite serially
+        run: bash tools/ci-check.sh
+
+      - name: Stop only this runner's Compose project
+        if: always()
+        run: |
+          if [[ -f infra/local/.env ]]; then
+            [[ "$CI_COMPOSE_PROJECT" =~ ^campus-ci-[0-9]+-[0-9]+$ ]]
+            docker compose --project-name "$CI_COMPOSE_PROJECT" --env-file infra/local/.env -f infra/local/compose.yaml down --remove-orphans
+          fi

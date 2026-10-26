@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import type { components } from '@campus/contracts/api';
 import { PublicApiError, useSession } from '../d/session';
@@ -19,6 +19,22 @@ const saving = ref(false);
 const notice = ref('');
 const error = ref('');
 const keys = new Map<string, string>();
+const codes = ref<Record<string, string>>({});
+const historyBusy = ref(false);
+const clock = ref(Date.now());
+let clockTimer: ReturnType<typeof setInterval> | undefined;
+function canCheckIn(item: components['schemas']['Booking']) {
+  const opensAt = item.checkInOpensAt;
+  const closesAt = item.checkInClosesAt;
+  return (
+    item.status === 'BOOKED' &&
+    Boolean(opensAt && closesAt) &&
+    opensAt !== undefined &&
+    closesAt !== undefined &&
+    clock.value >= Date.parse(opensAt) &&
+    clock.value < Date.parse(closesAt)
+  );
+}
 let generation = 0;
 function interval() {
   return { startsAt: `${start.value}:00+08:00`, endsAt: `${end.value}:00+08:00` };
@@ -40,6 +56,8 @@ function key(payload: unknown): string {
   return next;
 }
 async function history(more = false) {
+  if (historyBusy.value) return;
+  historyBusy.value = true;
   const version = generation;
   try {
     const result = await session.request<components['schemas']['BookingPage']>(
@@ -49,7 +67,9 @@ async function history(more = false) {
     bookings.value = more ? [...bookings.value, ...result.items] : result.items;
     bookingCursor.value = result.nextCursor;
   } catch (failure) {
-    fail(failure);
+    if (version === generation) fail(failure);
+  } finally {
+    historyBusy.value = false;
   }
 }
 async function search(more = false) {
@@ -79,12 +99,14 @@ async function reserve(seatId: string) {
   error.value = '';
   notice.value = '';
   const body = { seatId, ...interval() };
+  const version = generation;
   try {
     await session.request<components['schemas']['Booking']>('/api/v1/bookings', {
       method: 'POST',
       headers: { 'content-type': 'application/json', 'idempotency-key': key(['reserve', body]) },
       body: JSON.stringify(body),
     });
+    if (version !== generation) return;
     keys.delete(JSON.stringify(['reserve', body]));
     notice.value = '预约已保存';
     await history();
@@ -96,6 +118,7 @@ async function reserve(seatId: string) {
   }
 }
 async function cancel(id: string) {
+  const version = generation;
   if (saving.value) return;
   saving.value = true;
   error.value = '';
@@ -109,11 +132,68 @@ async function cancel(id: string) {
         body: JSON.stringify({ reason: '用户主动取消' }),
       },
     );
+    if (version !== generation) return;
     keys.delete(JSON.stringify(['cancel', id]));
     notice.value = '预约已取消';
     await history();
   } catch (failure) {
     fail(failure);
+  } finally {
+    saving.value = false;
+  }
+}
+async function checkIn(item: components['schemas']['Booking']) {
+  if (saving.value) return;
+  saving.value = true;
+  error.value = '';
+  notice.value = '';
+  const version = generation;
+  const body = { code: (codes.value[item.id] ?? '').trim().toUpperCase() };
+  const payload = ['check-in', item.id, body];
+  try {
+    await session.request('/api/v1/bookings/' + encodeURIComponent(item.id) + '/check-in', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'idempotency-key': key(payload) },
+      body: JSON.stringify(body),
+    });
+    if (version !== generation) return;
+    keys.delete(JSON.stringify(payload));
+    delete codes.value[item.id];
+    notice.value = '签到已确认';
+    await history();
+  } catch (failure) {
+    if (version === generation) {
+      fail(failure);
+      if (failure instanceof PublicApiError && failure.status === 400)
+        error.value = '请核对当天、本教室的8位签到码';
+      if (failure instanceof PublicApiError && failure.status === 409)
+        error.value = '教室可能处于维修或停用状态，请刷新记录并联系管理员';
+    }
+  } finally {
+    saving.value = false;
+  }
+}
+async function repeat(item: components['schemas']['Booking']) {
+  if (saving.value) return;
+  saving.value = true;
+  error.value = '';
+  notice.value = '';
+  const version = generation;
+  const body = interval();
+  const payload = ['repeat', item.id, body];
+  try {
+    await session.request('/api/v1/bookings/' + encodeURIComponent(item.id) + '/repeat', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'idempotency-key': key(payload) },
+      body: JSON.stringify(body),
+    });
+    if (version !== generation) return;
+    keys.delete(JSON.stringify(payload));
+    notice.value = '已按上方所选新时段再次预约原座位';
+    await history();
+    await search();
+  } catch (failure) {
+    if (version === generation) fail(failure);
   } finally {
     saving.value = false;
   }
@@ -141,13 +221,23 @@ watch(
       rooms.value = [];
       bookings.value = [];
       keys.clear();
+      codes.value = {};
       void router.replace('/login');
     }
   },
 );
 onMounted(() => {
+  clockTimer = setInterval(() => {
+    clock.value = Date.now();
+  }, 1000);
   if (session.loggedIn) void history();
   else void router.replace('/login');
+});
+onUnmounted(() => {
+  generation++;
+  if (clockTimer) clearInterval(clockTimer);
+  codes.value = {};
+  keys.clear();
 });
 const powers = { NONE: '无插座', FIXED: '固定插座', RAIL: '移动导轨插座' };
 const states: Record<string, string> = {
@@ -166,7 +256,7 @@ const states: Record<string, string> = {
     <p>时间按北京时间填写。按整点预约，初版默认单次最多 4 小时。</p>
   </header>
   <p class="notice">
-    教室须配置开放时间。搜索结果会在提交预约时重新核对；签到、提醒与违约功能尚待接入。
+    到达后输入管理员在教室展示的当天签到码。默认开始前15分钟可签到、开始后15分钟截止，以每条预约的窗口为准。提醒请查看“我的通知”；初版违约不自动封禁账号。
   </p>
   <p v-if="error" role="alert" class="form-error">{{ error }}</p>
   <p v-if="notice" role="status">{{ notice }}</p>
@@ -217,7 +307,9 @@ const states: Record<string, string> = {
   <section class="panel" style="margin-top: 24px">
     <div class="panel-heading">
       <h2>我的预约</h2>
-      <button class="secondary-button" :disabled="saving" @click="history()">刷新</button>
+      <button class="secondary-button" :disabled="saving || historyBusy" @click="history()">
+        刷新
+      </button>
     </div>
     <p v-if="!bookings.length" class="muted">暂无预约记录。</p>
     <article v-for="item in bookings" :key="item.id" class="booking-row">
@@ -228,6 +320,40 @@ const states: Record<string, string> = {
         </p>
         <p>{{ format(item.startsAt) }} — {{ format(item.endsAt) }}</p>
         <p class="muted">座位编号：{{ item.seatId }}</p>
+        <p v-if="item.checkInOpensAt && item.checkInClosesAt">
+          签到窗口：{{ format(item.checkInOpensAt) }} —
+          {{ format(item.checkInClosesAt) }}（截止时刻不含）
+        </p>
+        <p v-if="item.checkedInAt">签到时间：{{ format(item.checkedInAt) }}</p>
+        <p v-if="item.cancelReason">{{ item.cancelReason }}</p>
+        <p v-if="item.violationAt" class="form-error">本次记录一次未签到违约。</p>
+        <form
+          v-if="item.status === 'BOOKED'"
+          class="booking-search"
+          @submit.prevent="checkIn(item)"
+        >
+          <label
+            >当天教室码
+            <input
+              v-model="codes[item.id]"
+              minlength="8"
+              maxlength="8"
+              required
+              autocomplete="off"
+              spellcheck="false"
+              :disabled="saving || !canCheckIn(item)"
+            />
+          </label>
+          <button class="primary-button" type="submit" :disabled="saving || !canCheckIn(item)">
+            签到
+          </button>
+          <span v-if="!canCheckIn(item)" class="muted"
+            >当前不在签到窗口；服务端会再次核对时间。</span
+          >
+        </form>
+        <button class="secondary-button" :disabled="saving" @click="repeat(item)">
+          按上方新时段再约原座位
+        </button>
       </div>
       <button
         v-if="item.status === 'BOOKED' && Date.parse(item.startsAt) > Date.now()"

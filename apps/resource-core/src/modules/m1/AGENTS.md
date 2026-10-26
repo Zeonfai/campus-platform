@@ -4,7 +4,7 @@
 
 本模块职责：搜索、预约、签到、提醒、违约、统计，以及唯一调度入口。对应页面由本模块负责人放入 apps/web/src/modules/m1/，不能只交付后端。
 
-当前已实现可用性/预约/本人记录/取消及 M2、M3 各三个来源接口，共 11 个操作。M3 使用真实开始时间、整室无固定终点封锁；不取消既有个人/M2 记录，阻止新分配，仅释放本工单来源。本人预约列表/详情含 maintenanceAffected 影响提示，不能将提示当成通知已投递。签到/再次预约/统计/来源明细仍为占位。方案见 docs/implementation/task-006-resource-kernel.md 与 task-007-m3-workorders.md；历史调度证据见 docs/verification/2026-10-16-scheduling.md，本轮证据见 docs/verification/2026-10-21-workorders.md。实现某项接口时需同步更新契约的 x-implementation、状态文档及行为测试；不得批量改成成功响应。
+当前16个M1操作已有实现：可用性/预约/本人记录/取消、签到/每日教室码、再次预约、来源与统计，以及M2/M3各三个资源来源接口。TASK-009另补持久扫描的站内提醒、NO_SHOW/免罚和完成状态，默认方案见docs/implementation/task-009-booking-lifecycle.md；本轮真实验证见docs/verification/2026-10-26-booking-lifecycle.md。新预约冻结政策和签到窗口，旧预约不追溯处罚，维修首次releasedAt不随重复释放延长。站内消息不等于外部投递，统计签到小时不等于实际在座时长。接口计数不表示全部需求完成；外部提醒、申诉和本轮人工体验仍待补。
 
 约束：同教室的预约、整室占用和维修封锁须竞争同一数据库调度锁。按来源释放，保留幂等结果和版本墓碑。M3 时间不强制整点，不能误用个人预约 4 小时限制。M3 服务身份独立于 M2；报修公共可见性不扩大维修/派单/验收等 DEPARTMENT 管理权限，只覆盖同院系非空归属教室；core 与 workflow 保持一致。
 

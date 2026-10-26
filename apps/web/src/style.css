@@ -282,3 +282,115 @@ button:disabled {
 .booking-row p {
   margin: 8px 0 0;
 }
+
+.notification-list {
+  display: grid;
+  gap: 16px;
+  margin: 24px 0;
+}
+.operations-panel {
+  margin-bottom: 24px;
+}
+.operations-panel h2:not(:first-child) {
+  margin-top: 28px;
+}
+.operations-panel .booking-search {
+  margin-top: 18px;
+}
+.check-in-display {
+  margin-top: 20px;
+}
+.check-in-display strong {
+  display: block;
+  font-size: clamp(28px, 5vw, 48px);
+  font-family: ui-monospace, monospace;
+  letter-spacing: 0.18em;
+}
+
+.admin-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.admin-tabs .active {
+  background: #286661;
+  color: white;
+  border-color: #286661;
+}
+.admin-panel {
+  margin-bottom: 24px;
+}
+.admin-form {
+  display: grid;
+  gap: 16px;
+  margin-top: 20px;
+}
+.admin-form > label {
+  display: grid;
+  gap: 8px;
+  max-width: 600px;
+  font-size: 14px;
+}
+.admin-form input:not([type='checkbox']),
+.admin-form select,
+.admin-form textarea {
+  min-height: 42px;
+  padding: 9px 12px;
+  border: 1px solid #b7c8d0;
+  border-radius: 6px;
+  font: inherit;
+}
+.admin-form fieldset {
+  border: 1px solid #d9e3e9;
+  border-radius: 8px;
+  padding: 16px;
+}
+.admin-form fieldset legend {
+  font-size: 14px;
+  font-weight: 600;
+}
+.admin-form .admin-check {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.admin-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 10px;
+  margin: 12px 0;
+}
+.admin-options label {
+  display: flex;
+  align-items: start;
+  flex-wrap: wrap;
+  gap: 7px;
+  padding: 8px;
+  font-size: 13px;
+}
+.admin-options small {
+  flex-basis: 100%;
+  padding-left: 22px;
+  color: #64748b;
+  overflow-wrap: anywhere;
+}
+.admin-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.admin-actions .primary-button {
+  margin-top: 0;
+}
+.admin-panel details {
+  margin: 12px 0;
+}
+.admin-panel summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.admin-panel form h3 {
+  margin-bottom: 0;
+}
